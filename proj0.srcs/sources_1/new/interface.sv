@@ -34,6 +34,7 @@ interface AXIReadAddr;
     logic [ 2:0] protect;
 
     modport master(output valid, id, address, length, size, burst, lock, cache, protect, input ready);
+    modport slave(input valid, id, address, length, size, burst, lock, cache, protect, output ready);
 endinterface : AXIReadAddr //AXIReadAddr
 
 interface AXIReadData;
@@ -45,6 +46,7 @@ interface AXIReadData;
     logic [ 1:0] respond;
     logic        last;
     modport master(output ready, input valid, id, data, respond, last);
+    modport slave(input ready, output valid, id, data, respond, last);
 endinterface //AXIReadData
 
 interface AXIWriteAddr;
@@ -61,6 +63,7 @@ interface AXIWriteAddr;
     logic [ 2:0] protect;
 
     modport master(output valid, id, address, length, size, burst, lock, cache, protect, input ready);
+    modport slave(input valid, id, address, length, size, burst, lock, cache, protect, output ready);
 endinterface //AXIWriteAddr
 
 interface AXIWriteData;
@@ -73,6 +76,7 @@ interface AXIWriteData;
     logic        last;
 
     modport master(output valid, id, data, strobe, last, input ready);
+    modport slave(input valid, id, data, strobe, last, output ready);
 endinterface //AXIWriteData
 
 interface AXIWriteResp;
@@ -83,6 +87,7 @@ interface AXIWriteResp;
     logic [ 1:0] respond;
 
     modport master(output ready, input valid, id, respond);
+    modport slave(input ready, output valid, id, respond);
 endinterface //AXIWriteResp
 
 interface InstReq;
