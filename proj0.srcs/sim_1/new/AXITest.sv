@@ -82,7 +82,7 @@ module AXITest(
         rst = 1'b1;
         #25
         rst = 1'b0;
-        
+
         dataReq.sendWReq(32'h00000010, 32'h1, clk);
         dataReq.sendWReq(32'h00000014, 32'h2, clk);
         dataReq.sendWReq(32'h00000018, 32'h3, clk);
@@ -92,14 +92,29 @@ module AXITest(
         dataResp.getResp(clk);
         dataReq.sendRReq(32'h00000014, clk);
         dataResp.getResp(clk);
+        dataReq.sendWReq(32'h00000010, 32'ha, clk);
+        dataReq.sendWReq(32'h00000014, 32'hb, clk);
         dataReq.sendRReq(32'h00000018, clk);
         dataResp.getResp(clk);
         dataReq.sendRReq(32'h0000001C, clk);
         dataResp.getResp(clk);
+        dataReq.sendRReq(32'h00000010, clk);
+        dataResp.getResp(clk);
+        dataReq.sendRReq(32'h00000014, clk);
+        dataResp.getResp(clk);
+    end
 
+    initial begin
+        #400
         instReq.sendReq(32'h00000010, clk);
         instResp.getResp(clk);
-
+        instReq.sendReq(32'h00000010, clk);
+        instResp.getResp(clk);
+        #400
+        instReq.sendReq(32'h00000010, clk);
+        instResp.getResp(clk);
+        instReq.sendReq(32'h00000010, clk);
+        instResp.getResp(clk);
     end
 
     axi_test_blk_mem axi_mem (
