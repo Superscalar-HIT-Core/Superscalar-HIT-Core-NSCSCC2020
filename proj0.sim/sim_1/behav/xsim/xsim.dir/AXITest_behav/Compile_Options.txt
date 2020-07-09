@@ -1,1 +1,0 @@
--wto "38b5603f7260411797c4268fda834a9f" --incr --debug "typical" --relax --mt "2" -L "blk_mem_gen_v8_4_4" -L "xil_defaultlib" -L "unisims_ver" -L "unimacro_ver" -L "secureip" -L "xpm" --snapshot "AXITest_behav" "xil_defaultlib.AXITest" "xil_defaultlib.glbl" -log "elaborate.log" 

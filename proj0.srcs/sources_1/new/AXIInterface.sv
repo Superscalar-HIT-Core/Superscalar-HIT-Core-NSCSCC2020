@@ -47,6 +47,7 @@ module AXIInterface(
 
     logic           dataReqBusy;
     logic [31:0]    dataReqAddr;
+    logic [31:0]    dataReqData;
     logic           dataReqWEn;
     logic [3:0]     dataReqStrobe;
 
@@ -58,8 +59,8 @@ module AXIInterface(
 
     logic [1:0]     instRespCounter;
 
-    assign axiReadAddr.valid  = instReqBusy || (dataReqBusy && !dataReqWEn);
-    assign axiWriteAddr.valid = dataReqBusy && dataReqWEn;
+    assign axiReadAddr.valid  = rState == sRAddr && (instReqBusy || (dataReqBusy && !dataReqWEn));
+    assign axiWriteAddr.valid = dataReqBusy && dataReqWEn && wState == sWAddr;
 
     assign instReq.ready = ~instReqBusy;
     assign dataReq.ready = ~dataReqBusy;
@@ -69,22 +70,28 @@ module AXIInterface(
 
     always_ff @(posedge clk) begin
         if(rst) begin
-            instReqBusy = `FALSE;
+            instReqBusy <= `FALSE;
         end else if(instReq.valid && !instReqBusy) begin
-            instReqBusy = `TRUE;
-            instReqPC   = instReq.pc;
+            instReqBusy <= `TRUE;
+            instReqPC   <= instReq.pc;
+        end else if(rState == sRInst) begin
+            instReqBusy <= `FALSE;
         end
     end
 
     always_ff @(posedge clk) begin
         if(rst) begin
-            dataReqBusy     = `FALSE;
-            dataReqWEn      = `FALSE;
+            dataReqBusy     <= `FALSE;
+            dataReqWEn      <= `FALSE;
         end else if(dataReq.valid && !dataReqBusy) begin
-            dataReqBusy     = `TRUE;
-            dataReqAddr     = dataReq.addr;
-            dataReqWEn      = dataReq.write_en;
-            dataReqStrobe   = dataReq.strobe;
+            dataReqBusy     <= `TRUE;
+            dataReqAddr     <= dataReq.addr;
+            dataReqWEn      <= dataReq.write_en;
+            dataReqStrobe   <= dataReq.strobe;
+            dataReqData     <= dataReq.data;
+        end else if (rState == sRData || wState == sWResp) begin
+            dataReqBusy     <= `FALSE;
+            dataReqWEn      <= `FALSE;
         end
     end
 
@@ -217,7 +224,6 @@ module AXIInterface(
             end
             sRData: begin
                 axiReadData.ready = `TRUE;
-                dataReqBusy = `FALSE;
                 if(axiReadData.valid) begin
                     dReadReady = `TRUE;
                     dataResp.data = axiReadData.data;
@@ -226,7 +232,6 @@ module AXIInterface(
             end
             sRInst: begin
                 axiReadData.ready = `TRUE;
-                instReqBusy = `FALSE;
                 if(axiReadData.valid) begin
                     unique case(instRespCounter)
                         2'b00: iReadRes[ 31: 0] = axiReadData.data;
@@ -268,7 +273,7 @@ module AXIInterface(
             end
             sWData: begin
                 axiWriteData.id         = 4'h0;
-                axiWriteData.data       = dataReqWEn;
+                axiWriteData.data       = dataReqData;
                 axiWriteData.strobe     = dataReqStrobe;
                 axiWriteData.valid      = `TRUE;
             end

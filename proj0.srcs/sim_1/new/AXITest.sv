@@ -80,20 +80,25 @@ module AXITest(
     initial begin
         clk = 1'b0;
         rst = 1'b1;
-        #500
+        #25
         rst = 1'b0;
+        
         dataReq.sendWReq(32'h00000010, 32'h1, clk);
-        #20
         dataReq.sendWReq(32'h00000014, 32'h2, clk);
-        #20
         dataReq.sendWReq(32'h00000018, 32'h3, clk);
-        #20
         dataReq.sendWReq(32'h0000001C, 32'h4, clk);
-        #20
+
+        dataReq.sendRReq(32'h00000010, clk);
+        dataResp.getResp(clk);
+        dataReq.sendRReq(32'h00000014, clk);
+        dataResp.getResp(clk);
+        dataReq.sendRReq(32'h00000018, clk);
+        dataResp.getResp(clk);
+        dataReq.sendRReq(32'h0000001C, clk);
+        dataResp.getResp(clk);
 
         instReq.sendReq(32'h00000010, clk);
-        #100 
-        instResp.recvResp(clk);
+        instResp.getResp(clk);
 
     end
 

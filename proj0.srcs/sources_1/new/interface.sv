@@ -98,12 +98,16 @@ interface InstReq;
 
     modport axi(output ready, input valid, pc);
     modport iCache(input ready, output valid, pc);
-
-    task automatic sendReq(logic [31:0]  addr, logic clk);
-        valid   = `TRUE;
-        pc      = addr;
-        while(!ready) ;
-        @(posedge clk) valid = `FALSE;
+    
+    task automatic sendReq(logic [31:0] ad, ref logic clk);
+        @(posedge clk) #1 begin
+            valid       =   `TRUE;
+            pc        =   ad;
+        end
+        do @(posedge clk);
+        while (!ready);
+        #1
+        valid   =   `FALSE;
     endtask //automatic
 
 endinterface //InstReq
@@ -117,10 +121,14 @@ interface InstResp;
     modport axi(output valid, cacheLine, input ready);
     modport iCache(input valid, cacheLine, output ready);
 
-    task automatic recvResp(logic clk);
-        ready   =   `TRUE;
-        while (!valid) ;
-        @(posedge clk) ready   =   `FALSE;
+    task automatic getResp(ref logic clk);
+        @(posedge clk) #1 begin
+            ready       =   `TRUE;
+        end
+        do @(posedge clk);
+        while (!valid);
+        #1
+        ready   =   `FALSE;
     endtask //automatic
 
 endinterface //InstResp
@@ -137,13 +145,31 @@ interface DataReq;
     modport axi(output ready, input valid, addr, write_en, data, strobe);
     modport lsu(input ready, output valid, addr, write_en, data, strobe);
 
-    task automatic sendWReq(logic [31:0] ad, logic [31:0] dat, logic clk);
-        valid       =   `TRUE;
-        addr        =   ad;
-        write_en    =   `TRUE;
-        strobe      =   4'b1111;
-        while (!ready) ;
-        @(posedge clk) valid   =   `FALSE;
+    task automatic sendWReq(logic [31:0] ad, logic [31:0] dat, ref logic clk);
+        @(posedge clk) #1 begin
+            valid       =   `TRUE;
+            addr        =   ad;
+            write_en    =   `TRUE;
+            strobe      =   4'b1111;
+            data        =   dat;
+        end
+        do @(posedge clk);
+        while (!ready);
+        #1
+        valid   =   `FALSE;
+    endtask //automatic
+
+    task automatic sendRReq(logic [31:0] ad, ref logic clk);
+        @(posedge clk) #1 begin
+            valid       =   `TRUE;
+            addr        =   ad;
+            write_en    =   `FALSE;
+            strobe      =   4'b1111;
+        end
+        do @(posedge clk);
+        while (!ready);
+        #1
+        valid   =   `FALSE;
     endtask //automatic
 
 endinterface //DataReq
@@ -156,6 +182,16 @@ interface DataResp;
 
     modport axi(output valid, data, input ready);
     modport lsu(input valid, data, output ready);
+    
+    task automatic getResp(ref logic clk);
+        @(posedge clk) #1 begin
+            ready       =   `TRUE;
+        end
+        do @(posedge clk);
+        while (!valid);
+        #1
+        ready   =   `FALSE;
+    endtask //automatic
 endinterface //DataResp
 
 interface IF0_Regs;
