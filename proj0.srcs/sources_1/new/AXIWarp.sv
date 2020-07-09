@@ -32,42 +32,43 @@ module AXIWarp(
 
     output wire rsta_busy    ,      // dont care
     output wire rstb_busy    ,      // dont care
-    output wire s_aclk       ,
-    output wire s_aresetn    ,
+    
+    output wire         s_aclk         ,
+    output wire         s_aresetn      ,
 
-    output wire s_axi_awid   ,
-    output wire s_axi_awaddr ,
-    output wire s_axi_awlen  ,
-    output wire s_axi_awsize ,
-    output wire s_axi_awburst,
-    output wire s_axi_awvalid,
-    output wire s_axi_awready,
+    output wire [ 3:0]  s_axi_awid     ,
+    output wire [31:0]  s_axi_awaddr   ,
+    output wire [ 7:0]  s_axi_awlen    ,
+    output wire [ 2:0]  s_axi_awsize   ,
+    output wire [ 1:0]  s_axi_awburst  ,
+    output wire         s_axi_awvalid  ,
+    input  wire         s_axi_awready  ,
 
-    output wire s_axi_wdata  ,
-    output wire s_axi_wstrb  ,
-    output wire s_axi_wlast  ,
-    output wire s_axi_wvalid ,
-    output wire s_axi_wready ,
+    output wire [31:0]  s_axi_wdata    ,
+    output wire [ 3:0]  s_axi_wstrb    ,
+    output wire         s_axi_wlast    ,
+    output wire         s_axi_wvalid   ,
+    input  wire         s_axi_wready   ,
 
-    output wire s_axi_bid    ,
-    output wire s_axi_bresp  ,
-    output wire s_axi_bvalid ,
-    output wire s_axi_bready ,
+    input  wire [ 3:0]  s_axi_bid      ,
+    input  wire [ 1:0]  s_axi_bresp    ,
+    input  wire         s_axi_bvalid   ,
+    output wire         s_axi_bready   ,
 
-    output wire s_axi_arid   ,
-    output wire s_axi_araddr ,
-    output wire s_axi_arlen  ,
-    output wire s_axi_arsize ,
-    output wire s_axi_arburst,
-    output wire s_axi_arvalid,
-    output wire s_axi_arready,
+    output wire [ 3:0]  s_axi_arid     ,
+    output wire [31:0]  s_axi_araddr   ,
+    output wire [ 7:0]  s_axi_arlen    ,
+    output wire [ 2:0]  s_axi_arsize   ,
+    output wire [ 1:0]  s_axi_arburst  ,
+    output wire         s_axi_arvalid  ,
+    input  wire         s_axi_arready  ,
 
-    output wire s_axi_rid    ,
-    output wire s_axi_rdata  ,
-    output wire s_axi_rresp  ,
-    output wire s_axi_rlast  ,
-    output wire s_axi_rvalid ,
-    output wire s_axi_rready 
+    input  wire [ 3:0]  s_axi_rid      ,
+    input  wire [31:0]  s_axi_rdata    ,
+    input  wire [ 1:0]  s_axi_rresp    ,
+    input  wire         s_axi_rlast    ,
+    input  wire         s_axi_rvalid   ,
+    output wire         s_axi_rready   
     );
 
     assign s_aclk           = clk;
@@ -75,36 +76,43 @@ module AXIWarp(
 
     assign s_axi_awid       = axiWriteAddr.id;
     assign s_axi_awaddr     = axiWriteAddr.address;
-    assign s_axi_awlen      = axiWriteAddr.length;
+    assign s_axi_awlen[3:0] = axiWriteAddr.length;
+    assign s_axi_awlen[7:4] = 4'h0;
     assign s_axi_awsize     = axiWriteAddr.size;
     assign s_axi_awburst    = axiWriteAddr.burst;
     assign s_axi_awvalid    = axiWriteAddr.valid;
-    assign s_axi_awready    = axiWriteAddr.ready;
+    
+    assign axiWriteAddr.ready   = s_axi_awready;
 
     assign s_axi_wdata      = axiWriteData.data;
     assign s_axi_wstrb      = axiWriteData.strobe;
     assign s_axi_wlast      = axiWriteData.last;
     assign s_axi_wvalid     = axiWriteData.valid;
-    assign s_axi_wready     = axiWriteData.ready;
 
-    assign s_axi_bid        = axiWriteResp.id;
-    assign s_axi_bresp      = axiWriteResp.respond;
-    assign s_axi_bvalid     = axiWriteResp.valid;
+    assign axiWriteData.ready   = s_axi_wready;
+
+    assign axiWriteResp.id      = s_axi_bid    ;
+    assign axiWriteResp.respond = s_axi_bresp  ;
     assign s_axi_bready     = axiWriteResp.ready;
+    
+    assign axiWriteResp.valid = s_axi_bvalid;
 
     assign s_axi_arid       = axiReadAddr.id;
     assign s_axi_araddr     = axiReadAddr.address;
-    assign s_axi_arlen      = axiReadAddr.length;
+    assign s_axi_arlen[3:0] = axiReadAddr.length;
+    assign s_axi_arlen[7:4] = 4'h0;
     assign s_axi_arsize     = axiReadAddr.size;
     assign s_axi_arburst    = axiReadAddr.burst;
     assign s_axi_arvalid    = axiReadAddr.valid;
-    assign s_axi_arready    = axiReadAddr.ready;
 
-    assign s_axi_rid        = axiReadData.id;
-    assign s_axi_rdata      = axiReadData.data;
-    assign s_axi_rresp      = axiReadData.respond;
-    assign s_axi_rlast      = axiReadData.last;
-    assign s_axi_rvalid     = axiReadData.valid;
-    assign s_axi_rready     = axiReadData.ready;
+    assign axiReadAddr.ready    = s_axi_arready;
+
+    assign axiReadData.id       = s_axi_rid     ;
+    assign axiReadData.data     = s_axi_rdata   ;
+    assign axiReadData.respond  = s_axi_rresp   ;
+    assign axiReadData.last     = s_axi_rlast   ;
+    assign s_axi_rready  =  axiReadData.ready;
+    
+    assign axiReadData.valid    = s_axi_rvalid;
 
 endmodule

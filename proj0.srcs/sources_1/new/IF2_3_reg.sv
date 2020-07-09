@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 2020/07/07 20:13:01
+// Create Date: 2020/07/09 20:03:34
 // Design Name: 
-// Module Name: defs
+// Module Name: IF2_3_reg
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -19,9 +19,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-`define TRUE            1'b1
-`define FALSE           1'b0
-// `define WORD            31:0
-`define CACHE_WIDTH     127:0
-`define CACHE_DEPTH     256
 
+module IF2_3_reg(
+
+    );
+endmodule

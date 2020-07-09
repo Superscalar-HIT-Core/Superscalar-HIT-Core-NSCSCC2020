@@ -67,7 +67,7 @@ module AXIInterface(
     assign instResp.valid = iReadReady;
     assign dataResp.valid = dReadReady;
 
-    always_comb begin
+    always_ff @(posedge clk) begin
         if(rst) begin
             instReqBusy = `FALSE;
         end else if(instReq.valid && !instReqBusy) begin
@@ -76,9 +76,10 @@ module AXIInterface(
         end
     end
 
-    always_comb begin
+    always_ff @(posedge clk) begin
         if(rst) begin
             dataReqBusy     = `FALSE;
+            dataReqWEn      = `FALSE;
         end else if(dataReq.valid && !dataReqBusy) begin
             dataReqBusy     = `TRUE;
             dataReqAddr     = dataReq.addr;
@@ -117,7 +118,7 @@ module AXIInterface(
                 end else if(iReadReady && instResp.ready) begin
                     nextRState = sRAddr;
                 end else begin
-                    nextRState = sRData;
+                    nextRState = sRInst;
                 end
             end
             sRRst: begin
@@ -244,6 +245,12 @@ module AXIInterface(
                 axiReadData.ready = `FALSE;
                 iReadReady = `FALSE;
                 dReadReady = `FALSE;
+
+                axiReadAddr.id      = 4'h0;
+                axiReadAddr.address = 32'h00000000;
+                axiReadAddr.length  = 4'b0000;
+                axiReadAddr.size    = 3'b000;
+                axiReadAddr.burst   = 2'b10;
             end
         endcase
     end
@@ -270,6 +277,12 @@ module AXIInterface(
                 axiWriteResp.ready      = `TRUE;
             end
             sWRst: begin
+                axiWriteAddr.id         = 4'h0;
+                axiWriteAddr.address    = dataReqAddr;
+                axiWriteAddr.length     = 4'b0000;
+                axiWriteAddr.size       = 3'b010;
+                axiWriteAddr.burst      = 2'b01;
+
                 axiWriteData.valid      = `FALSE;
                 axiWriteResp.ready      = `FALSE;
             end
