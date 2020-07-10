@@ -59,19 +59,22 @@ module AXIInterface(
 
     logic [1:0]     instRespCounter;
 
+    logic           lastInstBusy;
+    logic           lastDataBusy;
+
     assign axiReadAddr.valid  = rState == sRAddr && (instReqBusy || (dataReqBusy && !dataReqWEn));
     assign axiWriteAddr.valid = dataReqBusy && dataReqWEn && wState == sWAddr;
 
-    assign instReq.ready = ~instReqBusy;
-    assign dataReq.ready = ~dataReqBusy;
+    assign instReq.ready = ~lastInstBusy;
+    assign dataReq.ready = ~lastDataBusy;
 
     assign instResp.valid = iReadReady;
     assign dataResp.valid = dReadReady;
 
-    always_ff @(posedge clk) begin
+    always_comb begin
         if(rst) begin
             instReqBusy <= `FALSE;
-        end else if(instReq.valid && !instReqBusy) begin
+        end else if(instReq.valid && !lastInstBusy) begin
             instReqBusy <= `TRUE;
             instReqPC   <= instReq.pc;
         end else if(rState == sRInst) begin
@@ -79,11 +82,11 @@ module AXIInterface(
         end
     end
 
-    always_ff @(posedge clk) begin
+    always_comb begin
         if(rst) begin
             dataReqBusy     <= `FALSE;
             dataReqWEn      <= `FALSE;
-        end else if(dataReq.valid && !dataReqBusy) begin
+        end else if(dataReq.valid && !lastDataBusy) begin
             dataReqBusy     <= `TRUE;
             dataReqAddr     <= dataReq.addr;
             dataReqWEn      <= dataReq.write_en;
@@ -93,6 +96,11 @@ module AXIInterface(
             dataReqBusy     <= `FALSE;
             dataReqWEn      <= `FALSE;
         end
+    end
+
+    always_ff @ (posedge clk) begin
+        lastInstBusy    <= instReqBusy;
+        lastDataBusy    <= dataReqBusy;
     end
 
     always_comb begin

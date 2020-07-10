@@ -1,2 +1,0 @@
-axi_test_blk_mem.v,verilog,xil_defaultlib,../../../../proj0.srcs/sources_1/ip/axi_test_blk_mem/sim/axi_test_blk_mem.v,
-glbl.v,Verilog,xil_defaultlib,glbl.v
