@@ -20,6 +20,31 @@
 //////////////////////////////////////////////////////////////////////////////////
 `include "defs.sv"
 
+typedef struct packed {
+    logic   [31:0]  target;
+    logic   [1:0]   bimState;
+    logic           taken;
+    logic           valid;
+} NLPPredInfo;
+
+typedef struct packed {
+    logic   [31:0]  target;
+    logic           taken;
+    logic           valid;
+} BPDPredInfo;
+
+typedef struct packed {
+    logic   [31:0]  inst;
+    logic   [31:0]  pc;
+    logic           isBr;
+    logic           isDs;
+    logic           isJ;
+    logic   [31:0]  targetAddr;
+    logic           valid;
+    NLPPredInfo     nlpInfo;
+    BPDPredInfo     bpdInfo;
+} InstBundle;
+
 interface AXIReadAddr;
     logic        valid;
     logic        ready;
@@ -101,7 +126,7 @@ interface InstReq;
     
     task automatic sendReq(logic [31:0] ad, ref logic clk);
         @(posedge clk) #1 begin
-            valid       =   `TRUE;
+            valid     =   `TRUE;
             pc        =   ad;
         end
         do @(posedge clk);
@@ -109,7 +134,6 @@ interface InstReq;
         #1
         valid   =   `FALSE;
     endtask //automatic
-
 endinterface //InstReq
 
 interface InstResp;
@@ -195,57 +219,87 @@ interface DataResp;
 endinterface //DataResp
 
 interface IF0_Regs;
-    logic           nPC;
-    logic           PC;
+    logic   [31:0]  nPC;
+    logic   [31:0]  PC;
+    logic           paused;
+
+    InstBundle      inst0;
+    InstBundle      inst1;
     
     logic           nextHeadIsDS;
     logic   [31:0]  nextDSTarget;
     logic           thisHeadIsDS;
     logic   [31:0]  dsTarget;
 
-    modport if0(input PC, thisHeadIsDS, dsTarget, output nPC, nextDSTarget, nextHeadIsDS);
-    modport regs(output PC, input nPC);
+    modport if0(input PC, thisHeadIsDS, dsTarget, paused, output nPC, nextDSTarget, nextHeadIsDS, inst0, inst1);
+    modport regs(output PC, thisHeadIsDS, dsTarget, paused, input nPC, nextDSTarget, nextHeadIsDS, inst0, inst1);
+
+    task automatic setPC(logic [31:0] addr, ref logic clk);
+        @(posedge clk) #1 nPC = addr;
+    endtask //automatic
+
 endinterface //IF0_1
 
 interface Regs_IF1;
-    logic       PC;
+    logic   [31:0]  PC;
 
     modport regs(output PC);
     modport if1(input PC);
 endinterface //Reg_IF1
 
 interface Regs_NLP;
-    logic       PC;
+    logic   [31:0]  PC;
 
     modport regs(output PC);
     modport nlp(input PC);
 endinterface //Regs_NLP
 
 interface Regs_BPD;
-    logic       PC;
+    logic   [31:0]  PC;
 
     modport regs(output PC);
     modport bpd(input PC);
 endinterface //Regs_BPD
 
 interface Regs_ICache;
-    logic       PC;
+    logic   [31:0]  PC;
 
-    modport regs(output PC);
-    modport iCache(input PC);
+    InstBundle      inst0;
+    InstBundle      inst1;
+
+    modport regs(output PC, inst0, inst1);
+    modport iCache(input PC, inst0, inst1);
+
+    task automatic sendPC(logic [31:0] addr, ref logic clk);
+        @(posedge clk) #1 PC = addr;
+    endtask //automatic
 endinterface //Regs_ICache
 
 interface ICache_TLB;
-    logic       PC;
+    logic   [31:0]  virAddr0;
+    logic   [31:0]  virAddr1;
+    logic   [31:0]  phyAddr0;
+    logic   [31:0]  phyAddr1;
 
-    modport regs(output PC);
-    modport bpd(input PC);
+    modport iCache(output virAddr0, virAddr1, input phyAddr0, phyAddr1);
+    modport tlb(input virAddr0, virAddr1, output phyAddr0, phyAddr1);
+    
+    task automatic autoReply(ref logic clk);
+        @ (posedge clk) begin
+            phyAddr0 = virAddr0;
+            phyAddr1 = virAddr1;
+        end
+    endtask //automatic
+
 endinterface //Regs_BPD
 
-interface IF1_Regs;
+interface ICache_Regs;
     InstBundle  inst0;
     InstBundle  inst1;
-endinterface //IF1_Regs
+
+    modport iCache(output inst0, inst1);
+    modport regs(input inst0, inst1);
+endinterface //ICache_Regs
 
 interface NLP_IF0;
     NLPPredInfo nlpInfo0;
@@ -267,8 +321,23 @@ interface BackendRedirect;
     logic           redirect;
     logic   [31:0]  redirectPC;
 
-    modport if0(input redirect, redirectPC);
-    modport backend(output redirect, redirectPC);
+    logic           ready;
+    logic           valid;
+
+    modport if0(input redirect, redirectPC, valid, output ready);
+    modport backend(output redirect, redirectPC, valid, output ready);
+
+    task automatic redirectReq(logic [31:0] addr, ref logic clk);
+        @(posedge clk) #1 begin
+            valid       =   `TRUE;
+            redirectPC  =   addr;
+            redirect    =   `TRUE;
+        end
+        do @(posedge clk);
+        while (!ready);
+        #1
+        valid   =   `FALSE;
+    endtask //automatic
 endinterface //BackendRedirect
 
 interface Ctrl;
@@ -277,33 +346,8 @@ interface Ctrl;
     logic           flush;
 
     modport master(input pauseReq, output pause, flush);
-    modport slave (output pauseReq, input pause, flush);
+    modport slave(output pauseReq, input pause, flush);
 endinterface //Ctrl
-
-typedef struct packed {
-    logic   [31:0]  target;
-    logic   [1:0]   bimState;
-    logic           taken;
-    logic           valid;
-} NLPPredInfo;
-
-typedef struct packed {
-    logic   [31:0]  target;
-    logic           taken;
-    logic           valid;
-} BPDPredInfo;
-
-typedef struct packed {
-    logic   [31:0]  inst;
-    logic   [31:0]  pc;
-    logic           isBr;
-    logic           isDs;
-    logic           isJ;
-    logic   [31:0]  targetAddr;
-    logic           valid;
-    NLPPredInfo     nlpInfo;
-    BPDPredInfo     bpdInfo;
-} InstBundle;
 
 // package defs;
 //     typedef enum logic {False, True} bool;
