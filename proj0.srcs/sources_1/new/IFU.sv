@@ -30,24 +30,38 @@ module IFU(
     ICache_TLB  iCache_tlb,
 
     Ctrl        ctrl_if0_1_regs,
-    Ctrl        ctrl_if1_2_regs,
     Ctrl        ctrl_if2_3_regs,
     Ctrl        ctrl_iCache,
+    Ctrl        ctrl_if3,
 
-    BackendRedirect     backend_if0
+    BackendRedirect     backend_if0,
+    BPDUpdate           backend_bpd,
+    NLPUpdate           backend_nlp
 );
     
-    NLP_IF0             nlp_if0;
-    IF3Redirect         if3_0;
-    IF0_Regs            if0_regs;
+    NLP_IF0             nlp_if0();
+    IF3Redirect         if3_0();
+    IF0_Regs            if0_regs();
 
-    Regs_IF1            regs_if1;
-    Regs_NLP            regs_nlp;
-    Regs_BPD            regs_bpd;
-    Regs_ICache         regs_iCache;
+    //Regs_IF1            regs_if1();
+    Regs_NLP            regs_nlp();
+    Regs_BPD            regs_bpd();
+    Regs_ICache         regs_iCache();
+
+    ICache_Regs         iCache_regs();
+
+    Regs_IF3            regs_if3();
+    BPD_IF3             bpd_if3();
+
+    IF3_Regs            if3_regs();
+    NLPUpdate           if3_nlp();
     
     IF_0        if0(.*);
     IF0_1_reg   if01reg(.*);
+    NLP         nlp(.*);
+    BPD         bpd(.*);
     ICache      iCache(.*);
+    IF2_3_reg   if23reg(.*);
+    IF_3        if3(.*);
     
 endmodule

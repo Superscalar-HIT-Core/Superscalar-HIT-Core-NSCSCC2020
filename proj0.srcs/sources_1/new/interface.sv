@@ -20,31 +20,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 `include "defs.sv"
 
-typedef struct packed {
-    logic   [31:0]  target;
-    logic   [1:0]   bimState;
-    logic           taken;
-    logic           valid;
-} NLPPredInfo;
-
-typedef struct packed {
-    logic   [31:0]  target;
-    logic           taken;
-    logic           valid;
-} BPDPredInfo;
-
-typedef struct packed {
-    logic   [31:0]  inst;
-    logic   [31:0]  pc;
-    logic           isBr;
-    logic           isDs;
-    logic           isJ;
-    logic   [31:0]  targetAddr;
-    logic           valid;
-    NLPPredInfo     nlpInfo;
-    BPDPredInfo     bpdInfo;
-} InstBundle;
-
 interface AXIReadAddr;
     logic        valid;
     logic        ready;
@@ -221,31 +196,25 @@ endinterface //DataResp
 interface IF0_Regs;
     logic   [31:0]  nPC;
     logic   [31:0]  PC;
-    logic           paused;
 
     InstBundle      inst0;
     InstBundle      inst1;
-    
-    logic           nextHeadIsDS;
-    logic   [31:0]  nextDSTarget;
-    logic           thisHeadIsDS;
-    logic   [31:0]  dsTarget;
 
-    modport if0(input PC, thisHeadIsDS, dsTarget, paused, output nPC, nextDSTarget, nextHeadIsDS, inst0, inst1);
-    modport regs(output PC, thisHeadIsDS, dsTarget, paused, input nPC, nextDSTarget, nextHeadIsDS, inst0, inst1);
+    modport if0(input PC, output nPC, inst0, inst1);
+    modport regs(output PC, input nPC, inst0, inst1);
 
     task automatic setPC(logic [31:0] addr, ref logic clk);
         @(posedge clk) #1 nPC = addr;
     endtask //automatic
 
 endinterface //IF0_1
-
+/*
 interface Regs_IF1;
     logic   [31:0]  PC;
 
     modport regs(output PC);
     modport if1(input PC);
-endinterface //Reg_IF1
+endinterface //Reg_IF1*/
 
 interface Regs_NLP;
     logic   [31:0]  PC;
@@ -301,6 +270,37 @@ interface ICache_Regs;
     modport regs(input inst0, inst1);
 endinterface //ICache_Regs
 
+interface NLPUpdate;
+    NLPUpdateInfo   update0;
+    NLPUpdateInfo   update1;
+
+    modport if3(output update0, update1);
+    modport nlp(input update0, update1);
+endinterface
+
+interface Regs_IF3;
+    InstBundle  inst0;
+    InstBundle  inst1;
+    logic       rescueDS;
+    modport regs(output inst0, inst1, input rescueDS);
+    modport if3(input inst0, inst1, output rescueDS);
+endinterface //Regs_IF3
+
+interface IF3_Regs;
+    InstBundle inst0;
+    InstBundle inst1;
+    modport regs(input inst0, inst1);
+    modport if3(output inst0, inst1);
+endinterface //Regs_IF3
+
+interface BPDUpdate;
+    BPDUpdateInfo   update;
+    logic           updValid;
+
+    modport backend(output update, updValid);
+    modport bpd(input update, updValid);
+endinterface
+
 interface NLP_IF0;
     NLPPredInfo nlpInfo0;
     NLPPredInfo nlpInfo1;
@@ -308,6 +308,16 @@ interface NLP_IF0;
     modport if0(input nlpInfo0, nlpInfo1);
     modport nlp(output nlpInfo0, nlpInfo1);
 endinterface //IF0_NLP
+
+interface BPD_IF3;
+    BPDPredInfo     bpdInfo0;
+    BPDPredInfo     bpdInfo1;
+    BPDUpdateInfo   update0;
+    BPDUpdateInfo   update1;
+
+    modport bpd(output bpdInfo0, bpdInfo1, input update0, update1);
+    modport if3(input bpdInfo0, bpdInfo1, output update0, update1);
+endinterface
 
 interface IF3Redirect;
     logic           redirect;
@@ -342,11 +352,12 @@ endinterface //BackendRedirect
 
 interface Ctrl;
     logic           pauseReq;
+    logic           flushReq;
     logic           pause;
     logic           flush;
 
-    modport master(input pauseReq, output pause, flush);
-    modport slave(output pauseReq, input pause, flush);
+    modport master(input pauseReq, flushReq, output pause, flush);
+    modport slave(output pauseReq, flushReq, input pause, flush);
 endinterface //Ctrl
 
 // package defs;

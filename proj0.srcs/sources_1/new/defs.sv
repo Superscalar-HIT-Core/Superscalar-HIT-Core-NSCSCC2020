@@ -19,9 +19,52 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+`ifndef DEFINES
+`define DEFINES
+
 `define TRUE            1'b1
 `define FALSE           1'b0
 // `define WORD            31:0
 `define CACHE_WIDTH     127:0
 `define CACHE_DEPTH     256
 
+typedef struct packed {
+    logic   [31:0]  target;
+    logic   [1:0]   bimState;
+    logic           taken;
+    logic           valid;
+} NLPPredInfo;
+
+typedef struct packed {
+    logic   [31:0]  target;
+    logic   [1:0]   bimState;
+    logic           shouldTake;
+    logic           valid;
+} NLPUpdateInfo;
+
+typedef struct packed {
+    // logic   [31:0]  target;
+    logic           taken;
+    logic           valid;
+} BPDPredInfo;
+
+typedef struct packed {
+    // logic   [31:0]  target;
+    logic           taken;
+    logic           valid;
+} BPDUpdateInfo;
+
+typedef struct packed {
+    logic   [31:0]  inst;
+    logic   [31:0]  pc;
+    logic           isBr;
+    logic           isDs;
+    logic           isJ;
+    logic   [31:0]  target;
+    logic           taken;
+    logic           valid;
+    NLPPredInfo     nlpInfo;
+    BPDPredInfo     bpdInfo;
+} InstBundle;
+
+`endif

@@ -1,10 +1,10 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.2 (win64) Build 2708876 Wed Nov  6 21:40:23 MST 2019
--- Date        : Wed Jul  8 03:06:17 2020
--- Host        : willson-desktop running 64-bit major release  (build 9200)
+-- Date        : Sat Jul 11 20:35:42 2020
+-- Host        : DESKTOP-67PR153 running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode synth_stub
---               c:/mips/shit_frontend/SHIT-Frontend/proj0.srcs/sources_1/ip/axi_test_blk_mem/axi_test_blk_mem_stub.vhdl
+--               C:/nscscc/proj0/proj0.srcs/sources_1/ip/axi_test_blk_mem/axi_test_blk_mem_stub.vhdl
 -- Design      : axi_test_blk_mem
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a200tfbg676-2

@@ -3,7 +3,8 @@
 // Tool Version: Vivado v.2019.2 (win64) Build 2708876 Wed Nov  6 21:40:23 MST 2019
 // Date        : Sat Jul 11 03:29:57 2020
 // Host        : DESKTOP-67PR153 running 64-bit major release  (build 9200)
-// Command     : write_verilog -force -mode synth_stub C:/nscscc/proj0/proj0.srcs/sources_1/ip/data_ram_0/data_ram_0_stub.v
+// Command     : write_verilog -force -mode synth_stub -rename_top data_ram_0 -prefix
+//               data_ram_0_ data_ram_0_stub.v
 // Design      : data_ram_0
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7a200tfbg676-2

@@ -18,9 +18,18 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-
+`include "defs.sv"
 
 module NLP(
+    Regs_NLP.nlp    regs_nlp,
+    NLP_IF0.nlp     nlp_if0,
 
-    );
+    NLPUpdate.nlp   if3_nlp,
+    NLPUpdate.nlp   backend_nlp
+);
+// fake nlp for now
+
+    assign nlp_if0.nlpInfo0.valid = `FALSE;
+    assign nlp_if0.nlpInfo1.valid = `FALSE;
+
 endmodule

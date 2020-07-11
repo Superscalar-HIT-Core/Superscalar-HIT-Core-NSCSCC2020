@@ -1,9 +1,10 @@
 // Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2019.2 (win64) Build 2708876 Wed Nov  6 21:40:23 MST 2019
-// Date        : Sat Jul 11 03:21:03 2020
+// Date        : Sat Jul 11 03:21:02 2020
 // Host        : DESKTOP-67PR153 running 64-bit major release  (build 9200)
-// Command     : write_verilog -force -mode funcsim c:/nscscc/proj0/proj0.srcs/sources_1/ip/tag_ram/tag_ram_sim_netlist.v
+// Command     : write_verilog -force -mode funcsim -rename_top tag_ram -prefix
+//               tag_ram_ tag_ram_sim_netlist.v
 // Design      : tag_ram
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -193,7 +194,6 @@ module tag_ram
         .web(1'b0));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_generic_cstr" *) 
 module tag_ram_blk_mem_gen_generic_cstr
    (douta,
     clka,
@@ -220,7 +220,6 @@ module tag_ram_blk_mem_gen_generic_cstr
         .wea(wea));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_prim_width" *) 
 module tag_ram_blk_mem_gen_prim_width
    (douta,
     clka,
@@ -247,7 +246,6 @@ module tag_ram_blk_mem_gen_prim_width
         .wea(wea));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_prim_wrapper" *) 
 module tag_ram_blk_mem_gen_prim_wrapper
    (douta,
     clka,
@@ -406,7 +404,6 @@ module tag_ram_blk_mem_gen_prim_wrapper
         .WEBWE({1'b0,1'b0,wea,wea}));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_top" *) 
 module tag_ram_blk_mem_gen_top
    (douta,
     clka,
@@ -458,7 +455,7 @@ endmodule
 (* C_WEA_WIDTH = "1" *) (* C_WEB_WIDTH = "1" *) (* C_WRITE_DEPTH_A = "64" *) 
 (* C_WRITE_DEPTH_B = "64" *) (* C_WRITE_MODE_A = "WRITE_FIRST" *) (* C_WRITE_MODE_B = "WRITE_FIRST" *) 
 (* C_WRITE_WIDTH_A = "22" *) (* C_WRITE_WIDTH_B = "22" *) (* C_XDEVICEFAMILY = "artix7" *) 
-(* ORIG_REF_NAME = "blk_mem_gen_v8_4_4" *) (* downgradeipidentifiedwarnings = "yes" *) 
+(* downgradeipidentifiedwarnings = "yes" *) 
 module tag_ram_blk_mem_gen_v8_4_4
    (clka,
     rsta,
@@ -684,7 +681,6 @@ module tag_ram_blk_mem_gen_v8_4_4
         .wea(wea));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_v8_4_4_synth" *) 
 module tag_ram_blk_mem_gen_v8_4_4_synth
    (douta,
     clka,

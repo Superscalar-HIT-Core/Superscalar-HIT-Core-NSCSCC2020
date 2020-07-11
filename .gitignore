@@ -2,6 +2,8 @@ proj0.cache
 proj0.hw
 proj0.runs
 proj0.sim/sim_1/behav
-*.log
 sim_scripts
+*.log
+*.veo
+*.vbo
 !*.sv

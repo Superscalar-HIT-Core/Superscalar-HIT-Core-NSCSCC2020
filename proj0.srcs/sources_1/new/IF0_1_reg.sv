@@ -28,32 +28,56 @@ module IF0_1_reg(
     
     IF0_Regs.regs       if0_regs,
 
-    Regs_IF1.regs       regs_if1,
     Regs_NLP.regs       regs_nlp,
     Regs_BPD.regs       regs_bpd,
-    Regs_ICache.regs    regs_iCache
+    Regs_ICache.regs    regs_iCache,
+
+    NLP_IF0.if0         nlp_if0,
+    IF3Redirect.if0     if3_0,
+    BackendRedirect.if0 backend_if0
 );
 
-    assign if0_regs.PC      = regs_if1.PC;
-    assign regs_nlp.PC      = regs_if1.PC;
-    assign regs_bpd.PC      = regs_if1.PC;
-    assign regs_iCache.PC   = regs_if1.PC;
-    assign if0_regs.paused  = ctrl_if0_1_regs.pause;
+    logic           headIsDS;
+    logic           dsAddr;
+    logic [31:0]    PC;
 
-    assign ctrl_if0_1_regs.pauseReq = `FALSE;
+    assign if0_regs.PC      = PC;
+    assign regs_nlp.PC      = PC;
+    assign regs_bpd.PC      = PC;
+    assign regs_iCache.PC   = PC;
+
+    assign ctrl_if0_1_regs.pauseReq     = `FALSE;
+
+    assign regs_iCache.inst0.nlpInfo    = nlp_if0.nlpInfo0;
+    assign regs_iCache.inst1.nlpInfo    = nlp_if0.nlpInfo1;
 
     always_ff @ (posedge clk) begin
         if(rst || ctrl_if0_1_regs.flush) begin
-            regs_if1.PC             <=  32'h0;
-            if0_regs.thisHeadIsDS   <=  `FALSE;
+            PC          <=  32'h0;
+            headIsDS    <=  `FALSE;
+        end else if(backend_if0.redirect && backend_if0.valid) begin
+            PC          <=  backend_if0.redirectPC;
+            headIsDS    <=  `FALSE;
+        end else if(if3_0.redirect) begin
+            PC          <=  if3_0.redirectPC;
+            headIsDS    <=  `FALSE;
+        end else if(headIsDS) begin
+            PC          <=  dsAddr;
+            headIsDS    <=  `FALSE;
+        end else if(nlp_if0.nlpInfo0.valid && nlp_if0.nlpInfo0.taken) begin
+            PC          <=  nlp_if0.nlpInfo0.target;
+            headIsDS    <=  `FALSE;
+        end else if(nlp_if0.nlpInfo1.valid && nlp_if0.nlpInfo1.taken) begin
+            PC          <=  if0_regs.nPC;
+            headIsDS    <=  `TRUE;
+            dsAddr      <=  nlp_if0.nlpInfo1.target;
         end else if(ctrl_if0_1_regs.pause) begin
-            regs_if1.PC             <=  regs_if1.PC;
-            if0_regs.thisHeadIsDS   <=  if0_regs.thisHeadIsDS;
-            if0_regs.dsTarget       <=  if0_regs.dsTarget;
+            PC          <=  PC;
+            headIsDS    <=  headIsDS;
+            dsAddr      <=  dsAddr;
         end else begin
-            regs_if1.PC             <=  if0_regs.nPC;
-            if0_regs.thisHeadIsDS   <=  if0_regs.nextHeadIsDS;
-            if0_regs.dsTarget       <=  if0_regs.nextDSTarget;
+            PC          <=  if0_regs.nPC;
+            headIsDS    <=  `FALSE;
         end
     end
 

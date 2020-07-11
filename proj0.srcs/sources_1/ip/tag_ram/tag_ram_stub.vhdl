@@ -1,9 +1,10 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.2 (win64) Build 2708876 Wed Nov  6 21:40:23 MST 2019
--- Date        : Sat Jul 11 03:21:03 2020
+-- Date        : Sat Jul 11 03:21:02 2020
 -- Host        : DESKTOP-67PR153 running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode synth_stub c:/nscscc/proj0/proj0.srcs/sources_1/ip/tag_ram/tag_ram_stub.vhdl
+-- Command     : write_vhdl -force -mode synth_stub -rename_top tag_ram -prefix
+--               tag_ram_ tag_ram_stub.vhdl
 -- Design      : tag_ram
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a200tfbg676-2

@@ -3,8 +3,8 @@
 -- Tool Version: Vivado v.2019.2 (win64) Build 2708876 Wed Nov  6 21:40:23 MST 2019
 -- Date        : Sat Jul 11 03:29:57 2020
 -- Host        : DESKTOP-67PR153 running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode funcsim
---               C:/nscscc/proj0/proj0.srcs/sources_1/ip/data_ram_0/data_ram_0_sim_netlist.vhdl
+-- Command     : write_vhdl -force -mode funcsim -rename_top data_ram_0 -prefix
+--               data_ram_0_ data_ram_0_sim_netlist.vhdl
 -- Design      : data_ram_0
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -22,8 +22,6 @@ entity data_ram_0_blk_mem_gen_prim_wrapper is
     dina : in STD_LOGIC_VECTOR ( 71 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of data_ram_0_blk_mem_gen_prim_wrapper : entity is "blk_mem_gen_prim_wrapper";
 end data_ram_0_blk_mem_gen_prim_wrapper;
 
 architecture STRUCTURE of data_ram_0_blk_mem_gen_prim_wrapper is
@@ -596,8 +594,6 @@ entity data_ram_0_blk_mem_gen_prim_width is
     dina : in STD_LOGIC_VECTOR ( 71 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of data_ram_0_blk_mem_gen_prim_width : entity is "blk_mem_gen_prim_width";
 end data_ram_0_blk_mem_gen_prim_width;
 
 architecture STRUCTURE of data_ram_0_blk_mem_gen_prim_width is
@@ -650,8 +646,6 @@ entity data_ram_0_blk_mem_gen_generic_cstr is
     dina : in STD_LOGIC_VECTOR ( 127 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of data_ram_0_blk_mem_gen_generic_cstr : entity is "blk_mem_gen_generic_cstr";
 end data_ram_0_blk_mem_gen_generic_cstr;
 
 architecture STRUCTURE of data_ram_0_blk_mem_gen_generic_cstr is
@@ -685,8 +679,6 @@ entity data_ram_0_blk_mem_gen_top is
     dina : in STD_LOGIC_VECTOR ( 127 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of data_ram_0_blk_mem_gen_top : entity is "blk_mem_gen_top";
 end data_ram_0_blk_mem_gen_top;
 
 architecture STRUCTURE of data_ram_0_blk_mem_gen_top is
@@ -712,8 +704,6 @@ entity data_ram_0_blk_mem_gen_v8_4_4_synth is
     dina : in STD_LOGIC_VECTOR ( 127 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of data_ram_0_blk_mem_gen_v8_4_4_synth : entity is "blk_mem_gen_v8_4_4_synth";
 end data_ram_0_blk_mem_gen_v8_4_4_synth;
 
 architecture STRUCTURE of data_ram_0_blk_mem_gen_v8_4_4_synth is
@@ -947,8 +937,6 @@ entity data_ram_0_blk_mem_gen_v8_4_4 is
   attribute C_WRITE_WIDTH_B of data_ram_0_blk_mem_gen_v8_4_4 : entity is 128;
   attribute C_XDEVICEFAMILY : string;
   attribute C_XDEVICEFAMILY of data_ram_0_blk_mem_gen_v8_4_4 : entity is "artix7";
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of data_ram_0_blk_mem_gen_v8_4_4 : entity is "blk_mem_gen_v8_4_4";
   attribute downgradeipidentifiedwarnings : string;
   attribute downgradeipidentifiedwarnings of data_ram_0_blk_mem_gen_v8_4_4 : entity is "yes";
 end data_ram_0_blk_mem_gen_v8_4_4;

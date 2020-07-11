@@ -34,21 +34,16 @@ module PlayGround(
     DataReq         dataReq();
     DataResp        dataResp();
 
-    Ctrl            ctrl_iCache();
-    Ctrl            ctrl_if0_1_regs();
-    Regs_ICache     regs_iCache();
-    ICache_TLB      iCache_tlb();
-    ICache_Regs     iCache_regs();
+    Ctrl                ctrl_if0_1_regs();
+    Ctrl                ctrl_if2_3_regs();
+    Ctrl                ctrl_iCache();
+    Ctrl                ctrl_if3();
 
-    NLP_IF0         nlp_if0();
-    IF3Redirect     if3_0();
-    BackendRedirect backend_if0();
+    ICache_TLB          iCache_tlb();
 
-    IF0_Regs        if0_regs();
-
-    Regs_IF1        regs_if1();
-    Regs_NLP        regs_nlp();
-    Regs_BPD        regs_bpd();
+    BackendRedirect     backend_if0();
+    BPDUpdate           backend_bpd();
+    NLPUpdate           backend_nlp();
 
     logic clk;
     logic rst;
@@ -90,10 +85,8 @@ module PlayGround(
     AXIInterface        axiInterface(.*);
     AXIWarp             AXIWarp(.*);
     //axi_test_blk_mem    axi_mem(.*);
-    IF0_1_reg           if0_1_reg(.*);
-    ICache              iCache(.*);
     CtrlUnit            ctrlUnit(.*);
-    IF_0                if0(.*);
+    IFU                 ifu(.*);
 
     always #10 clk = ~clk;
 
@@ -120,8 +113,9 @@ module PlayGround(
         dataReq.sendWReq(32'h00000148, 32'he, clk);
         dataReq.sendWReq(32'h0000014C, 32'hf, clk);
         #5000
-        backend_if0.redirectReq(32'h00000100, clk);
-        $display("FIN.");
+        backend_if0.redirectReq(32'h00000114, clk);
+        #1000
+        $stop(1);
     end
 
     initial begin
