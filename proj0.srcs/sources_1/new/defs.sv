@@ -25,8 +25,9 @@
 `define TRUE            1'b1
 `define FALSE           1'b0
 // `define WORD            31:0
-`define CACHE_WIDTH     127:0
-`define CACHE_DEPTH     256
+
+`define IB_SIZE         16
+`define IB_ADDR         3:0
 
 typedef struct packed {
     logic   [31:0]  target;

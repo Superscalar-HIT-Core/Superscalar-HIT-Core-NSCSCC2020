@@ -46,9 +46,9 @@ module IF_3(
         .pc     (regs_if3.inst0.pc      ),
         .inst   (regs_if3.inst0.inst    ),
         .valid  (regs_if3.inst0.valid   ),
-        .isJ    (regs_if3.inst0.isJ     ),
-        .isBr   (regs_if3.inst0.isBr    ),
-        .target (regs_if3.inst0.target  ),
+        .isJ    (if3_regs.inst0.isJ     ),
+        .isBr   (if3_regs.inst0.isBr    ),
+        .target (if3_regs.inst0.target  ),
         .jr     (inst0Jr                )
     );
 
@@ -56,9 +56,9 @@ module IF_3(
         .pc     (regs_if3.inst1.pc      ),
         .inst   (regs_if3.inst1.inst    ),
         .valid  (regs_if3.inst1.valid   ),
-        .isJ    (regs_if3.inst1.isJ     ),
-        .isBr   (regs_if3.inst1.isBr    ),
-        .target (regs_if3.inst1.target  ),
+        .isJ    (if3_regs.inst1.isJ     ),
+        .isBr   (if3_regs.inst1.isBr    ),
+        .target (if3_regs.inst1.target  ),
         .jr     (inst1Jr                )
     );
 
@@ -117,12 +117,14 @@ module IF_3(
             inst0State = sCorrect;
         end else if(inst0.taken && inst0NLPTaken) begin
             inst0State = sWrongTarget;
+        end else if(inst0.taken && !inst0NLPTaken) begin
+            inst0State = sFalseNeg;
         end else if(!inst0.taken && !inst0NLPTaken) begin
             inst0State = sCorrect;
-        end else if(inst0NLPTaken) begin
+        end else if(!inst0.taken && inst0NLPTaken && !inst0Jr) begin
             inst0State = sFalsePos;
         end else begin
-            inst0State = sFalseNeg;
+            inst0State = sCorrect;
         end
 
         if((!inst1.nlpInfo.valid && !inst1.bpdInfo.valid) || (!inst1.isJ && !inst1.isBr)) begin
@@ -131,14 +133,16 @@ module IF_3(
             inst1State = sCorrect;
         end else if(inst1.taken && inst1NLPTaken) begin
             inst1State = sWrongTarget;
+        end else if(inst1.taken && !inst1NLPTaken) begin
+            inst1State = sFalseNeg;
         end else if(!inst1.taken && !inst1NLPTaken) begin
             inst1State = sCorrect;
-        end else if(inst1NLPTaken) begin
+        end else if(!inst1.taken && inst1NLPTaken && !inst1Jr) begin
             inst1State = sFalsePos;
         end else begin
-            inst1State = sFalseNeg;
+            inst1State = sCorrect;
         end
-        
+
         if(inst0State != sCorrect) begin
             case(inst0State)
                 sFalsePos: begin
@@ -284,7 +288,7 @@ module IF_3(
             end
         endcase
 
-
+        if(ctrl_if3.flush) regs_if3.rescueDS = `FALSE;
     end
 
 endmodule

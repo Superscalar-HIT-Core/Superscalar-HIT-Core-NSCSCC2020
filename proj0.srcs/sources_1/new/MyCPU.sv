@@ -79,10 +79,14 @@ module MyCPU(
     BackendRedirect     backend_if0();
     BPDUpdate           backend_bpd();
     NLPUpdate           backend_nlp();
-    
+
     ICache_TLB          iCache_tlb();
+    
+    IFU_InstBuffer      ifu_instBuffer();
+    InstBuffer_Backend  instBuffer_backend();
 
     AXIInterface    axiInterface(.*);
     AXIWarp         axiWarp(.*);
     IFU             ifu(.*);
+    InstBuffer      instBuffer(.*);
 endmodule

@@ -79,13 +79,8 @@ module ICache(
     logic [ 31:0]   insts   [ 3:0];
     logic [  3:0]   age     [63:0];
     logic [  1:0]   writeSel;
-
-    logic [ 3:0]    debugProbe;
-
-    assign debugProbe[0]    = valid[0][lineAddress];
-    assign debugProbe[1]    = valid[1][lineAddress];
-    assign debugProbe[2]    = valid[2][lineAddress];
-    assign debugProbe[3]    = valid[3][lineAddress];
+    logic           lastPause;
+    logic           pauseDiscard;
 
     TagRamIO    tag0IO,     tag1IO,     tag2IO,     tag3IO;
     DataRamIO   data0IO,    data1IO,    data2IO,    data3IO;
@@ -177,6 +172,12 @@ module ICache(
     assign data2IO.clk  = clk;
     assign data3IO.clk  = clk;
 
+    assign iCache_regs.overrun = ctrl_iCache.pause;
+
+    always_ff @ (posedge clk) lastPause = ctrl_iCache.pause;
+
+    assign pauseDiscard = lastPause && !ctrl_iCache.pause;
+
     always_comb begin
         if(state == sBlock && instResp.valid) hitLine = instResp.cacheLine;
         else if(tag == tag0IO.dataOut && valid[0][delayLineAddr]) hitLine = data0IO.dataOut;
@@ -261,8 +262,8 @@ module ICache(
             age[delayLineAddr][2]   = 1'b0; 
             age[delayLineAddr][1]   = 1'b0; 
         end
-        iCache_regs.inst0                      = regs_iCache.inst0;
-        iCache_regs.inst1                      = regs_iCache.inst1;
+        iCache_regs.inst0                   = regs_iCache.inst0;
+        iCache_regs.inst1                   = regs_iCache.inst1;
         case(state)
             sStartUp: begin
                 instReq.valid               = `FALSE;
@@ -292,11 +293,11 @@ module ICache(
                     ctrl_iCache.pauseReq        = `FALSE;
                     
                     iCache_regs.inst0.pc        = delayPC & 32'hffff_fffc;
-                    iCache_regs.inst0.valid     = ~delayPC[2];
+                    iCache_regs.inst0.valid     = ~delayPC[2] && !pauseDiscard;
                     iCache_regs.inst0.inst      = insts[{delayPC[3], 1'b0}];
 
                     iCache_regs.inst1.pc        = delayPC | 32'h0000_0004;
-                    iCache_regs.inst1.valid     = `TRUE;
+                    iCache_regs.inst1.valid     = !pauseDiscard;
                     iCache_regs.inst1.inst      = insts[{delayPC[3], 1'b1}];
                 end else begin
                     iCache_regs.inst0.valid     = `FALSE;
@@ -331,11 +332,11 @@ module ICache(
                     ctrl_iCache.pauseReq        = `FALSE;
                     
                     iCache_regs.inst0.pc        = delayPC & 32'hffff_fffc;
-                    iCache_regs.inst0.valid     = ~delayPC[2];
+                    iCache_regs.inst0.valid     = ~delayPC[2] && !pauseDiscard;
                     iCache_regs.inst0.inst      = insts[{delayPC[3], 1'b0}];
 
                     iCache_regs.inst1.pc        = delayPC | 32'h0000_0004;
-                    iCache_regs.inst1.valid     = `TRUE;
+                    iCache_regs.inst1.valid     = !pauseDiscard;
                     iCache_regs.inst1.inst      = insts[{delayPC[3], 1'b1}];
                 end else begin
                     instReq.valid               = `TRUE;

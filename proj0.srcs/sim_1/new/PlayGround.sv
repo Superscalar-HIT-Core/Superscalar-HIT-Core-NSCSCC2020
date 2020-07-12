@@ -38,12 +38,18 @@ module PlayGround(
     Ctrl                ctrl_if2_3_regs();
     Ctrl                ctrl_iCache();
     Ctrl                ctrl_if3();
+    Ctrl                ctrl_if3_output_regs();
+    Ctrl                ctrl_instBuffer();
 
     ICache_TLB          iCache_tlb();
 
     BackendRedirect     backend_if0();
     BPDUpdate           backend_bpd();
     NLPUpdate           backend_nlp();
+
+    IFU_InstBuffer      ifu_instBuffer();
+    InstBuffer_Backend  instBuffer_backend();
+
 
     logic clk;
     logic rst;
@@ -84,9 +90,10 @@ module PlayGround(
 
     AXIInterface        axiInterface(.*);
     AXIWarp             AXIWarp(.*);
-    //axi_test_blk_mem    axi_mem(.*);
+    // axi_test_blk_mem    axi_mem(.*);
     CtrlUnit            ctrlUnit(.*);
     IFU                 ifu(.*);
+    InstBuffer          instBuffer(.*);
 
     always #10 clk = ~clk;
 
@@ -121,6 +128,16 @@ module PlayGround(
     initial begin
         forever iCache_tlb.autoReply(clk);
     end
+
+    initial begin
+        #9;
+        forever begin
+            integer b = $random % 4;
+            while (b --> 0) #20;
+            instBuffer_backend.getResp(clk);
+        end
+    end
+
     initial begin
         //if0_regs.fakeIF0(32'h00000000, clk);
         //if0_regs.fakeIF0(32'h00000010, clk);

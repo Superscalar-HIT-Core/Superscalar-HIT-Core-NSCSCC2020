@@ -5,5 +5,5 @@ proj0.sim/sim_1/behav
 sim_scripts
 *.log
 *.veo
-*.vbo
+*.vho
 !*.sv
