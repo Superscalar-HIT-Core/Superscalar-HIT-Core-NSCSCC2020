@@ -75,6 +75,8 @@ module MyCPU(
     Ctrl                ctrl_if2_3_regs();
     Ctrl                ctrl_iCache();
     Ctrl                ctrl_if3();
+    Ctrl                ctrl_if3_output_regs();
+    Ctrl                ctrl_instBuffer();
 
     BackendRedirect     backend_if0();
     BPDUpdate           backend_bpd();
@@ -85,6 +87,7 @@ module MyCPU(
     IFU_InstBuffer      ifu_instBuffer();
     InstBuffer_Backend  instBuffer_backend();
 
+    CtrlUnit        cu(.*);
     AXIInterface    axiInterface(.*);
     AXIWarp         axiWarp(.*);
     IFU             ifu(.*);
