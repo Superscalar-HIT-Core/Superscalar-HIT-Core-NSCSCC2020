@@ -1,7 +1,7 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.2 (win64) Build 2708876 Wed Nov  6 21:40:23 MST 2019
--- Date        : Wed Jul 15 19:47:57 2020
+-- Date        : Wed Jul 15 22:25:13 2020
 -- Host        : DESKTOP-67PR153 running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode funcsim C:/nscscc/proj0/proj0.srcs/sources_1/ip/tag_ram/tag_ram_sim_netlist.vhdl
 -- Design      : tag_ram
@@ -15,10 +15,10 @@ library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
 entity tag_ram_blk_mem_gen_prim_wrapper is
   port (
-    douta : out STD_LOGIC_VECTOR ( 19 downto 0 );
+    douta : out STD_LOGIC_VECTOR ( 20 downto 0 );
     clka : in STD_LOGIC;
-    addra : in STD_LOGIC_VECTOR ( 7 downto 0 );
-    dina : in STD_LOGIC_VECTOR ( 19 downto 0 );
+    addra : in STD_LOGIC_VECTOR ( 5 downto 0 );
+    dina : in STD_LOGIC_VECTOR ( 20 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
   attribute ORIG_REF_NAME : string;
@@ -28,7 +28,6 @@ end tag_ram_blk_mem_gen_prim_wrapper;
 architecture STRUCTURE of tag_ram_blk_mem_gen_prim_wrapper is
   signal \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_0\ : STD_LOGIC;
   signal \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_1\ : STD_LOGIC;
-  signal \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_10\ : STD_LOGIC;
   signal \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_16\ : STD_LOGIC;
   signal \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_17\ : STD_LOGIC;
   signal \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_18\ : STD_LOGIC;
@@ -148,40 +147,39 @@ begin
       WRITE_WIDTH_B => 18
     )
         port map (
-      ADDRARDADDR(13) => '0',
-      ADDRARDADDR(12 downto 5) => addra(7 downto 0),
+      ADDRARDADDR(13 downto 11) => B"000",
+      ADDRARDADDR(10 downto 5) => addra(5 downto 0),
       ADDRARDADDR(4 downto 0) => B"00000",
-      ADDRBWRADDR(13) => '0',
-      ADDRBWRADDR(12 downto 5) => addra(7 downto 0),
+      ADDRBWRADDR(13 downto 11) => B"000",
+      ADDRBWRADDR(10 downto 5) => addra(5 downto 0),
       ADDRBWRADDR(4 downto 0) => B"10000",
       CLKARDCLK => clka,
       CLKBWRCLK => clka,
       DIADI(15 downto 13) => B"000",
-      DIADI(12 downto 8) => dina(9 downto 5),
-      DIADI(7 downto 5) => B"000",
-      DIADI(4 downto 0) => dina(4 downto 0),
+      DIADI(12 downto 8) => dina(10 downto 6),
+      DIADI(7 downto 6) => B"00",
+      DIADI(5 downto 0) => dina(5 downto 0),
       DIBDI(15 downto 13) => B"000",
-      DIBDI(12 downto 8) => dina(19 downto 15),
+      DIBDI(12 downto 8) => dina(20 downto 16),
       DIBDI(7 downto 5) => B"000",
-      DIBDI(4 downto 0) => dina(14 downto 10),
+      DIBDI(4 downto 0) => dina(15 downto 11),
       DIPADIP(1 downto 0) => B"00",
       DIPBDIP(1 downto 0) => B"00",
       DOADO(15) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_0\,
       DOADO(14) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_1\,
       DOADO(13) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_2\,
-      DOADO(12 downto 8) => douta(9 downto 5),
+      DOADO(12 downto 8) => douta(10 downto 6),
       DOADO(7) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_8\,
       DOADO(6) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_9\,
-      DOADO(5) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_10\,
-      DOADO(4 downto 0) => douta(4 downto 0),
+      DOADO(5 downto 0) => douta(5 downto 0),
       DOBDO(15) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_16\,
       DOBDO(14) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_17\,
       DOBDO(13) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_18\,
-      DOBDO(12 downto 8) => douta(19 downto 15),
+      DOBDO(12 downto 8) => douta(20 downto 16),
       DOBDO(7) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_24\,
       DOBDO(6) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_25\,
       DOBDO(5) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_26\,
-      DOBDO(4 downto 0) => douta(14 downto 10),
+      DOBDO(4 downto 0) => douta(15 downto 11),
       DOPADOP(1) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_32\,
       DOPADOP(0) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_33\,
       DOPBDOP(1) => \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_34\,
@@ -207,10 +205,10 @@ library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
 entity tag_ram_blk_mem_gen_prim_width is
   port (
-    douta : out STD_LOGIC_VECTOR ( 19 downto 0 );
+    douta : out STD_LOGIC_VECTOR ( 20 downto 0 );
     clka : in STD_LOGIC;
-    addra : in STD_LOGIC_VECTOR ( 7 downto 0 );
-    dina : in STD_LOGIC_VECTOR ( 19 downto 0 );
+    addra : in STD_LOGIC_VECTOR ( 5 downto 0 );
+    dina : in STD_LOGIC_VECTOR ( 20 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
   attribute ORIG_REF_NAME : string;
@@ -221,10 +219,10 @@ architecture STRUCTURE of tag_ram_blk_mem_gen_prim_width is
 begin
 \prim_noinit.ram\: entity work.tag_ram_blk_mem_gen_prim_wrapper
      port map (
-      addra(7 downto 0) => addra(7 downto 0),
+      addra(5 downto 0) => addra(5 downto 0),
       clka => clka,
-      dina(19 downto 0) => dina(19 downto 0),
-      douta(19 downto 0) => douta(19 downto 0),
+      dina(20 downto 0) => dina(20 downto 0),
+      douta(20 downto 0) => douta(20 downto 0),
       wea(0) => wea(0)
     );
 end STRUCTURE;
@@ -234,10 +232,10 @@ library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
 entity tag_ram_blk_mem_gen_generic_cstr is
   port (
-    douta : out STD_LOGIC_VECTOR ( 19 downto 0 );
+    douta : out STD_LOGIC_VECTOR ( 20 downto 0 );
     clka : in STD_LOGIC;
-    addra : in STD_LOGIC_VECTOR ( 7 downto 0 );
-    dina : in STD_LOGIC_VECTOR ( 19 downto 0 );
+    addra : in STD_LOGIC_VECTOR ( 5 downto 0 );
+    dina : in STD_LOGIC_VECTOR ( 20 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
   attribute ORIG_REF_NAME : string;
@@ -248,10 +246,10 @@ architecture STRUCTURE of tag_ram_blk_mem_gen_generic_cstr is
 begin
 \ramloop[0].ram.r\: entity work.tag_ram_blk_mem_gen_prim_width
      port map (
-      addra(7 downto 0) => addra(7 downto 0),
+      addra(5 downto 0) => addra(5 downto 0),
       clka => clka,
-      dina(19 downto 0) => dina(19 downto 0),
-      douta(19 downto 0) => douta(19 downto 0),
+      dina(20 downto 0) => dina(20 downto 0),
+      douta(20 downto 0) => douta(20 downto 0),
       wea(0) => wea(0)
     );
 end STRUCTURE;
@@ -261,10 +259,10 @@ library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
 entity tag_ram_blk_mem_gen_top is
   port (
-    douta : out STD_LOGIC_VECTOR ( 19 downto 0 );
+    douta : out STD_LOGIC_VECTOR ( 20 downto 0 );
     clka : in STD_LOGIC;
-    addra : in STD_LOGIC_VECTOR ( 7 downto 0 );
-    dina : in STD_LOGIC_VECTOR ( 19 downto 0 );
+    addra : in STD_LOGIC_VECTOR ( 5 downto 0 );
+    dina : in STD_LOGIC_VECTOR ( 20 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
   attribute ORIG_REF_NAME : string;
@@ -275,10 +273,10 @@ architecture STRUCTURE of tag_ram_blk_mem_gen_top is
 begin
 \valid.cstr\: entity work.tag_ram_blk_mem_gen_generic_cstr
      port map (
-      addra(7 downto 0) => addra(7 downto 0),
+      addra(5 downto 0) => addra(5 downto 0),
       clka => clka,
-      dina(19 downto 0) => dina(19 downto 0),
-      douta(19 downto 0) => douta(19 downto 0),
+      dina(20 downto 0) => dina(20 downto 0),
+      douta(20 downto 0) => douta(20 downto 0),
       wea(0) => wea(0)
     );
 end STRUCTURE;
@@ -288,10 +286,10 @@ library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
 entity tag_ram_blk_mem_gen_v8_4_4_synth is
   port (
-    douta : out STD_LOGIC_VECTOR ( 19 downto 0 );
+    douta : out STD_LOGIC_VECTOR ( 20 downto 0 );
     clka : in STD_LOGIC;
-    addra : in STD_LOGIC_VECTOR ( 7 downto 0 );
-    dina : in STD_LOGIC_VECTOR ( 19 downto 0 );
+    addra : in STD_LOGIC_VECTOR ( 5 downto 0 );
+    dina : in STD_LOGIC_VECTOR ( 20 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
   attribute ORIG_REF_NAME : string;
@@ -302,10 +300,10 @@ architecture STRUCTURE of tag_ram_blk_mem_gen_v8_4_4_synth is
 begin
 \gnbram.gnativebmg.native_blk_mem_gen\: entity work.tag_ram_blk_mem_gen_top
      port map (
-      addra(7 downto 0) => addra(7 downto 0),
+      addra(5 downto 0) => addra(5 downto 0),
       clka => clka,
-      dina(19 downto 0) => dina(19 downto 0),
-      douta(19 downto 0) => douta(19 downto 0),
+      dina(20 downto 0) => dina(20 downto 0),
+      douta(20 downto 0) => douta(20 downto 0),
       wea(0) => wea(0)
     );
 end STRUCTURE;
@@ -320,23 +318,23 @@ entity tag_ram_blk_mem_gen_v8_4_4 is
     ena : in STD_LOGIC;
     regcea : in STD_LOGIC;
     wea : in STD_LOGIC_VECTOR ( 0 to 0 );
-    addra : in STD_LOGIC_VECTOR ( 7 downto 0 );
-    dina : in STD_LOGIC_VECTOR ( 19 downto 0 );
-    douta : out STD_LOGIC_VECTOR ( 19 downto 0 );
+    addra : in STD_LOGIC_VECTOR ( 5 downto 0 );
+    dina : in STD_LOGIC_VECTOR ( 20 downto 0 );
+    douta : out STD_LOGIC_VECTOR ( 20 downto 0 );
     clkb : in STD_LOGIC;
     rstb : in STD_LOGIC;
     enb : in STD_LOGIC;
     regceb : in STD_LOGIC;
     web : in STD_LOGIC_VECTOR ( 0 to 0 );
-    addrb : in STD_LOGIC_VECTOR ( 7 downto 0 );
-    dinb : in STD_LOGIC_VECTOR ( 19 downto 0 );
-    doutb : out STD_LOGIC_VECTOR ( 19 downto 0 );
+    addrb : in STD_LOGIC_VECTOR ( 5 downto 0 );
+    dinb : in STD_LOGIC_VECTOR ( 20 downto 0 );
+    doutb : out STD_LOGIC_VECTOR ( 20 downto 0 );
     injectsbiterr : in STD_LOGIC;
     injectdbiterr : in STD_LOGIC;
     eccpipece : in STD_LOGIC;
     sbiterr : out STD_LOGIC;
     dbiterr : out STD_LOGIC;
-    rdaddrecc : out STD_LOGIC_VECTOR ( 7 downto 0 );
+    rdaddrecc : out STD_LOGIC_VECTOR ( 5 downto 0 );
     sleep : in STD_LOGIC;
     deepsleep : in STD_LOGIC;
     shutdown : in STD_LOGIC;
@@ -351,7 +349,7 @@ entity tag_ram_blk_mem_gen_v8_4_4 is
     s_axi_awburst : in STD_LOGIC_VECTOR ( 1 downto 0 );
     s_axi_awvalid : in STD_LOGIC;
     s_axi_awready : out STD_LOGIC;
-    s_axi_wdata : in STD_LOGIC_VECTOR ( 19 downto 0 );
+    s_axi_wdata : in STD_LOGIC_VECTOR ( 20 downto 0 );
     s_axi_wstrb : in STD_LOGIC_VECTOR ( 0 to 0 );
     s_axi_wlast : in STD_LOGIC;
     s_axi_wvalid : in STD_LOGIC;
@@ -368,7 +366,7 @@ entity tag_ram_blk_mem_gen_v8_4_4 is
     s_axi_arvalid : in STD_LOGIC;
     s_axi_arready : out STD_LOGIC;
     s_axi_rid : out STD_LOGIC_VECTOR ( 3 downto 0 );
-    s_axi_rdata : out STD_LOGIC_VECTOR ( 19 downto 0 );
+    s_axi_rdata : out STD_LOGIC_VECTOR ( 20 downto 0 );
     s_axi_rresp : out STD_LOGIC_VECTOR ( 1 downto 0 );
     s_axi_rlast : out STD_LOGIC;
     s_axi_rvalid : out STD_LOGIC;
@@ -377,12 +375,12 @@ entity tag_ram_blk_mem_gen_v8_4_4 is
     s_axi_injectdbiterr : in STD_LOGIC;
     s_axi_sbiterr : out STD_LOGIC;
     s_axi_dbiterr : out STD_LOGIC;
-    s_axi_rdaddrecc : out STD_LOGIC_VECTOR ( 7 downto 0 )
+    s_axi_rdaddrecc : out STD_LOGIC_VECTOR ( 5 downto 0 )
   );
   attribute C_ADDRA_WIDTH : integer;
-  attribute C_ADDRA_WIDTH of tag_ram_blk_mem_gen_v8_4_4 : entity is 8;
+  attribute C_ADDRA_WIDTH of tag_ram_blk_mem_gen_v8_4_4 : entity is 6;
   attribute C_ADDRB_WIDTH : integer;
-  attribute C_ADDRB_WIDTH of tag_ram_blk_mem_gen_v8_4_4 : entity is 8;
+  attribute C_ADDRB_WIDTH of tag_ram_blk_mem_gen_v8_4_4 : entity is 6;
   attribute C_ALGORITHM : integer;
   attribute C_ALGORITHM of tag_ram_blk_mem_gen_v8_4_4 : entity is 1;
   attribute C_AXI_ID_WIDTH : integer;
@@ -426,7 +424,7 @@ entity tag_ram_blk_mem_gen_v8_4_4 is
   attribute C_EN_SLEEP_PIN : integer;
   attribute C_EN_SLEEP_PIN of tag_ram_blk_mem_gen_v8_4_4 : entity is 0;
   attribute C_EST_POWER_SUMMARY : string;
-  attribute C_EST_POWER_SUMMARY of tag_ram_blk_mem_gen_v8_4_4 : entity is "Estimated Power for IP     :     3.03925 mW";
+  attribute C_EST_POWER_SUMMARY of tag_ram_blk_mem_gen_v8_4_4 : entity is "Estimated Power for IP     :     3.08085 mW";
   attribute C_FAMILY : string;
   attribute C_FAMILY of tag_ram_blk_mem_gen_v8_4_4 : entity is "artix7";
   attribute C_HAS_AXI_ID : integer;
@@ -476,17 +474,17 @@ entity tag_ram_blk_mem_gen_v8_4_4 is
   attribute C_PRIM_TYPE : integer;
   attribute C_PRIM_TYPE of tag_ram_blk_mem_gen_v8_4_4 : entity is 1;
   attribute C_READ_DEPTH_A : integer;
-  attribute C_READ_DEPTH_A of tag_ram_blk_mem_gen_v8_4_4 : entity is 256;
+  attribute C_READ_DEPTH_A of tag_ram_blk_mem_gen_v8_4_4 : entity is 64;
   attribute C_READ_DEPTH_B : integer;
-  attribute C_READ_DEPTH_B of tag_ram_blk_mem_gen_v8_4_4 : entity is 256;
+  attribute C_READ_DEPTH_B of tag_ram_blk_mem_gen_v8_4_4 : entity is 64;
   attribute C_READ_LATENCY_A : integer;
   attribute C_READ_LATENCY_A of tag_ram_blk_mem_gen_v8_4_4 : entity is 1;
   attribute C_READ_LATENCY_B : integer;
   attribute C_READ_LATENCY_B of tag_ram_blk_mem_gen_v8_4_4 : entity is 1;
   attribute C_READ_WIDTH_A : integer;
-  attribute C_READ_WIDTH_A of tag_ram_blk_mem_gen_v8_4_4 : entity is 20;
+  attribute C_READ_WIDTH_A of tag_ram_blk_mem_gen_v8_4_4 : entity is 21;
   attribute C_READ_WIDTH_B : integer;
-  attribute C_READ_WIDTH_B of tag_ram_blk_mem_gen_v8_4_4 : entity is 20;
+  attribute C_READ_WIDTH_B of tag_ram_blk_mem_gen_v8_4_4 : entity is 21;
   attribute C_RSTRAM_A : integer;
   attribute C_RSTRAM_A of tag_ram_blk_mem_gen_v8_4_4 : entity is 0;
   attribute C_RSTRAM_B : integer;
@@ -516,17 +514,17 @@ entity tag_ram_blk_mem_gen_v8_4_4 is
   attribute C_WEB_WIDTH : integer;
   attribute C_WEB_WIDTH of tag_ram_blk_mem_gen_v8_4_4 : entity is 1;
   attribute C_WRITE_DEPTH_A : integer;
-  attribute C_WRITE_DEPTH_A of tag_ram_blk_mem_gen_v8_4_4 : entity is 256;
+  attribute C_WRITE_DEPTH_A of tag_ram_blk_mem_gen_v8_4_4 : entity is 64;
   attribute C_WRITE_DEPTH_B : integer;
-  attribute C_WRITE_DEPTH_B of tag_ram_blk_mem_gen_v8_4_4 : entity is 256;
+  attribute C_WRITE_DEPTH_B of tag_ram_blk_mem_gen_v8_4_4 : entity is 64;
   attribute C_WRITE_MODE_A : string;
   attribute C_WRITE_MODE_A of tag_ram_blk_mem_gen_v8_4_4 : entity is "WRITE_FIRST";
   attribute C_WRITE_MODE_B : string;
   attribute C_WRITE_MODE_B of tag_ram_blk_mem_gen_v8_4_4 : entity is "WRITE_FIRST";
   attribute C_WRITE_WIDTH_A : integer;
-  attribute C_WRITE_WIDTH_A of tag_ram_blk_mem_gen_v8_4_4 : entity is 20;
+  attribute C_WRITE_WIDTH_A of tag_ram_blk_mem_gen_v8_4_4 : entity is 21;
   attribute C_WRITE_WIDTH_B : integer;
-  attribute C_WRITE_WIDTH_B of tag_ram_blk_mem_gen_v8_4_4 : entity is 20;
+  attribute C_WRITE_WIDTH_B of tag_ram_blk_mem_gen_v8_4_4 : entity is 21;
   attribute C_XDEVICEFAMILY : string;
   attribute C_XDEVICEFAMILY of tag_ram_blk_mem_gen_v8_4_4 : entity is "artix7";
   attribute ORIG_REF_NAME : string;
@@ -539,6 +537,7 @@ architecture STRUCTURE of tag_ram_blk_mem_gen_v8_4_4 is
   signal \<const0>\ : STD_LOGIC;
 begin
   dbiterr <= \<const0>\;
+  doutb(20) <= \<const0>\;
   doutb(19) <= \<const0>\;
   doutb(18) <= \<const0>\;
   doutb(17) <= \<const0>\;
@@ -559,8 +558,6 @@ begin
   doutb(2) <= \<const0>\;
   doutb(1) <= \<const0>\;
   doutb(0) <= \<const0>\;
-  rdaddrecc(7) <= \<const0>\;
-  rdaddrecc(6) <= \<const0>\;
   rdaddrecc(5) <= \<const0>\;
   rdaddrecc(4) <= \<const0>\;
   rdaddrecc(3) <= \<const0>\;
@@ -579,14 +576,13 @@ begin
   s_axi_bresp(0) <= \<const0>\;
   s_axi_bvalid <= \<const0>\;
   s_axi_dbiterr <= \<const0>\;
-  s_axi_rdaddrecc(7) <= \<const0>\;
-  s_axi_rdaddrecc(6) <= \<const0>\;
   s_axi_rdaddrecc(5) <= \<const0>\;
   s_axi_rdaddrecc(4) <= \<const0>\;
   s_axi_rdaddrecc(3) <= \<const0>\;
   s_axi_rdaddrecc(2) <= \<const0>\;
   s_axi_rdaddrecc(1) <= \<const0>\;
   s_axi_rdaddrecc(0) <= \<const0>\;
+  s_axi_rdata(20) <= \<const0>\;
   s_axi_rdata(19) <= \<const0>\;
   s_axi_rdata(18) <= \<const0>\;
   s_axi_rdata(17) <= \<const0>\;
@@ -624,10 +620,10 @@ GND: unisim.vcomponents.GND
     );
 inst_blk_mem_gen: entity work.tag_ram_blk_mem_gen_v8_4_4_synth
      port map (
-      addra(7 downto 0) => addra(7 downto 0),
+      addra(5 downto 0) => addra(5 downto 0),
       clka => clka,
-      dina(19 downto 0) => dina(19 downto 0),
-      douta(19 downto 0) => douta(19 downto 0),
+      dina(20 downto 0) => dina(20 downto 0),
+      douta(20 downto 0) => douta(20 downto 0),
       wea(0) => wea(0)
     );
 end STRUCTURE;
@@ -639,9 +635,9 @@ entity tag_ram is
   port (
     clka : in STD_LOGIC;
     wea : in STD_LOGIC_VECTOR ( 0 to 0 );
-    addra : in STD_LOGIC_VECTOR ( 7 downto 0 );
-    dina : in STD_LOGIC_VECTOR ( 19 downto 0 );
-    douta : out STD_LOGIC_VECTOR ( 19 downto 0 )
+    addra : in STD_LOGIC_VECTOR ( 5 downto 0 );
+    dina : in STD_LOGIC_VECTOR ( 20 downto 0 );
+    douta : out STD_LOGIC_VECTOR ( 20 downto 0 )
   );
   attribute NotValidForBitStream : boolean;
   attribute NotValidForBitStream of tag_ram : entity is true;
@@ -666,18 +662,18 @@ architecture STRUCTURE of tag_ram is
   signal NLW_U0_s_axi_sbiterr_UNCONNECTED : STD_LOGIC;
   signal NLW_U0_s_axi_wready_UNCONNECTED : STD_LOGIC;
   signal NLW_U0_sbiterr_UNCONNECTED : STD_LOGIC;
-  signal NLW_U0_doutb_UNCONNECTED : STD_LOGIC_VECTOR ( 19 downto 0 );
-  signal NLW_U0_rdaddrecc_UNCONNECTED : STD_LOGIC_VECTOR ( 7 downto 0 );
+  signal NLW_U0_doutb_UNCONNECTED : STD_LOGIC_VECTOR ( 20 downto 0 );
+  signal NLW_U0_rdaddrecc_UNCONNECTED : STD_LOGIC_VECTOR ( 5 downto 0 );
   signal NLW_U0_s_axi_bid_UNCONNECTED : STD_LOGIC_VECTOR ( 3 downto 0 );
   signal NLW_U0_s_axi_bresp_UNCONNECTED : STD_LOGIC_VECTOR ( 1 downto 0 );
-  signal NLW_U0_s_axi_rdaddrecc_UNCONNECTED : STD_LOGIC_VECTOR ( 7 downto 0 );
-  signal NLW_U0_s_axi_rdata_UNCONNECTED : STD_LOGIC_VECTOR ( 19 downto 0 );
+  signal NLW_U0_s_axi_rdaddrecc_UNCONNECTED : STD_LOGIC_VECTOR ( 5 downto 0 );
+  signal NLW_U0_s_axi_rdata_UNCONNECTED : STD_LOGIC_VECTOR ( 20 downto 0 );
   signal NLW_U0_s_axi_rid_UNCONNECTED : STD_LOGIC_VECTOR ( 3 downto 0 );
   signal NLW_U0_s_axi_rresp_UNCONNECTED : STD_LOGIC_VECTOR ( 1 downto 0 );
   attribute C_ADDRA_WIDTH : integer;
-  attribute C_ADDRA_WIDTH of U0 : label is 8;
+  attribute C_ADDRA_WIDTH of U0 : label is 6;
   attribute C_ADDRB_WIDTH : integer;
-  attribute C_ADDRB_WIDTH of U0 : label is 8;
+  attribute C_ADDRB_WIDTH of U0 : label is 6;
   attribute C_ALGORITHM : integer;
   attribute C_ALGORITHM of U0 : label is 1;
   attribute C_AXI_ID_WIDTH : integer;
@@ -721,7 +717,7 @@ architecture STRUCTURE of tag_ram is
   attribute C_EN_SLEEP_PIN : integer;
   attribute C_EN_SLEEP_PIN of U0 : label is 0;
   attribute C_EST_POWER_SUMMARY : string;
-  attribute C_EST_POWER_SUMMARY of U0 : label is "Estimated Power for IP     :     3.03925 mW";
+  attribute C_EST_POWER_SUMMARY of U0 : label is "Estimated Power for IP     :     3.08085 mW";
   attribute C_FAMILY : string;
   attribute C_FAMILY of U0 : label is "artix7";
   attribute C_HAS_AXI_ID : integer;
@@ -771,17 +767,17 @@ architecture STRUCTURE of tag_ram is
   attribute C_PRIM_TYPE : integer;
   attribute C_PRIM_TYPE of U0 : label is 1;
   attribute C_READ_DEPTH_A : integer;
-  attribute C_READ_DEPTH_A of U0 : label is 256;
+  attribute C_READ_DEPTH_A of U0 : label is 64;
   attribute C_READ_DEPTH_B : integer;
-  attribute C_READ_DEPTH_B of U0 : label is 256;
+  attribute C_READ_DEPTH_B of U0 : label is 64;
   attribute C_READ_LATENCY_A : integer;
   attribute C_READ_LATENCY_A of U0 : label is 1;
   attribute C_READ_LATENCY_B : integer;
   attribute C_READ_LATENCY_B of U0 : label is 1;
   attribute C_READ_WIDTH_A : integer;
-  attribute C_READ_WIDTH_A of U0 : label is 20;
+  attribute C_READ_WIDTH_A of U0 : label is 21;
   attribute C_READ_WIDTH_B : integer;
-  attribute C_READ_WIDTH_B of U0 : label is 20;
+  attribute C_READ_WIDTH_B of U0 : label is 21;
   attribute C_RSTRAM_A : integer;
   attribute C_RSTRAM_A of U0 : label is 0;
   attribute C_RSTRAM_B : integer;
@@ -811,17 +807,17 @@ architecture STRUCTURE of tag_ram is
   attribute C_WEB_WIDTH : integer;
   attribute C_WEB_WIDTH of U0 : label is 1;
   attribute C_WRITE_DEPTH_A : integer;
-  attribute C_WRITE_DEPTH_A of U0 : label is 256;
+  attribute C_WRITE_DEPTH_A of U0 : label is 64;
   attribute C_WRITE_DEPTH_B : integer;
-  attribute C_WRITE_DEPTH_B of U0 : label is 256;
+  attribute C_WRITE_DEPTH_B of U0 : label is 64;
   attribute C_WRITE_MODE_A : string;
   attribute C_WRITE_MODE_A of U0 : label is "WRITE_FIRST";
   attribute C_WRITE_MODE_B : string;
   attribute C_WRITE_MODE_B of U0 : label is "WRITE_FIRST";
   attribute C_WRITE_WIDTH_A : integer;
-  attribute C_WRITE_WIDTH_A of U0 : label is 20;
+  attribute C_WRITE_WIDTH_A of U0 : label is 21;
   attribute C_WRITE_WIDTH_B : integer;
-  attribute C_WRITE_WIDTH_B of U0 : label is 20;
+  attribute C_WRITE_WIDTH_B of U0 : label is 21;
   attribute C_XDEVICEFAMILY : string;
   attribute C_XDEVICEFAMILY of U0 : label is "artix7";
   attribute downgradeipidentifiedwarnings of U0 : label is "yes";
@@ -836,22 +832,22 @@ architecture STRUCTURE of tag_ram is
 begin
 U0: entity work.tag_ram_blk_mem_gen_v8_4_4
      port map (
-      addra(7 downto 0) => addra(7 downto 0),
-      addrb(7 downto 0) => B"00000000",
+      addra(5 downto 0) => addra(5 downto 0),
+      addrb(5 downto 0) => B"000000",
       clka => clka,
       clkb => '0',
       dbiterr => NLW_U0_dbiterr_UNCONNECTED,
       deepsleep => '0',
-      dina(19 downto 0) => dina(19 downto 0),
-      dinb(19 downto 0) => B"00000000000000000000",
-      douta(19 downto 0) => douta(19 downto 0),
-      doutb(19 downto 0) => NLW_U0_doutb_UNCONNECTED(19 downto 0),
+      dina(20 downto 0) => dina(20 downto 0),
+      dinb(20 downto 0) => B"000000000000000000000",
+      douta(20 downto 0) => douta(20 downto 0),
+      doutb(20 downto 0) => NLW_U0_doutb_UNCONNECTED(20 downto 0),
       eccpipece => '0',
       ena => '0',
       enb => '0',
       injectdbiterr => '0',
       injectsbiterr => '0',
-      rdaddrecc(7 downto 0) => NLW_U0_rdaddrecc_UNCONNECTED(7 downto 0),
+      rdaddrecc(5 downto 0) => NLW_U0_rdaddrecc_UNCONNECTED(5 downto 0),
       regcea => '0',
       regceb => '0',
       rsta => '0',
@@ -881,15 +877,15 @@ U0: entity work.tag_ram_blk_mem_gen_v8_4_4
       s_axi_dbiterr => NLW_U0_s_axi_dbiterr_UNCONNECTED,
       s_axi_injectdbiterr => '0',
       s_axi_injectsbiterr => '0',
-      s_axi_rdaddrecc(7 downto 0) => NLW_U0_s_axi_rdaddrecc_UNCONNECTED(7 downto 0),
-      s_axi_rdata(19 downto 0) => NLW_U0_s_axi_rdata_UNCONNECTED(19 downto 0),
+      s_axi_rdaddrecc(5 downto 0) => NLW_U0_s_axi_rdaddrecc_UNCONNECTED(5 downto 0),
+      s_axi_rdata(20 downto 0) => NLW_U0_s_axi_rdata_UNCONNECTED(20 downto 0),
       s_axi_rid(3 downto 0) => NLW_U0_s_axi_rid_UNCONNECTED(3 downto 0),
       s_axi_rlast => NLW_U0_s_axi_rlast_UNCONNECTED,
       s_axi_rready => '0',
       s_axi_rresp(1 downto 0) => NLW_U0_s_axi_rresp_UNCONNECTED(1 downto 0),
       s_axi_rvalid => NLW_U0_s_axi_rvalid_UNCONNECTED,
       s_axi_sbiterr => NLW_U0_s_axi_sbiterr_UNCONNECTED,
-      s_axi_wdata(19 downto 0) => B"00000000000000000000",
+      s_axi_wdata(20 downto 0) => B"000000000000000000000",
       s_axi_wlast => '0',
       s_axi_wready => NLW_U0_s_axi_wready_UNCONNECTED,
       s_axi_wstrb(0) => '0',

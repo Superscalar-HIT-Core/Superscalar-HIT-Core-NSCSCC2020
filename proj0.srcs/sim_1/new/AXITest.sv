@@ -29,10 +29,13 @@ module AXITest(
     AXIWriteAddr    axiWriteAddr();
     AXIWriteData    axiWriteData();
     AXIWriteResp    axiWriteResp();
+
     InstReq         instReq();
     InstResp        instResp();
     DataReq         dataReq();
     DataResp        dataResp();
+    DCacheReq       dCacheReq();
+    DCacheResp      dCacheResp();
 
     logic clk;
     logic rst;
@@ -92,15 +95,17 @@ module AXITest(
         dataResp.getResp(clk);
         dataReq.sendRReq(32'h00000014, clk);
         dataResp.getResp(clk);
-        dataReq.sendWReq(32'h00000010, 32'ha, clk);
-        dataReq.sendWReq(32'h00000014, 32'hb, clk);
+
+        dataReq.sendWReq(32'h00000020, 32'ha, clk);
+        dataReq.sendWReq(32'h00000024, 32'hb, clk);
+
         dataReq.sendRReq(32'h00000018, clk);
         dataResp.getResp(clk);
         dataReq.sendRReq(32'h0000001C, clk);
         dataResp.getResp(clk);
-        dataReq.sendRReq(32'h00000010, clk);
+        dataReq.sendRReq(32'h00000020, clk);
         dataResp.getResp(clk);
-        dataReq.sendRReq(32'h00000014, clk);
+        dataReq.sendRReq(32'h00000024, clk);
         dataResp.getResp(clk);
     end
 
@@ -108,13 +113,29 @@ module AXITest(
         #400
         instReq.sendReq(32'h00000010, clk);
         instResp.getResp(clk);
-        instReq.sendReq(32'h00000010, clk);
+        instReq.sendReq(32'h00000018, clk);
         instResp.getResp(clk);
         #400
-        instReq.sendReq(32'h00000010, clk);
+        instReq.sendReq(32'h0000011C, clk);
         instResp.getResp(clk);
-        instReq.sendReq(32'h00000010, clk);
+        instReq.sendReq(32'h00000140, clk);
         instResp.getResp(clk);
+    end
+
+    initial begin
+        #100
+        dCacheReq.sendWReq(32'h00000110, 128'hFFFFFFFF_EEEEEEEE_DDDDDDDD_CCCCCCCC, clk);
+        dCacheReq.sendWReq(32'h00000120, 128'hBBBBBBBB_AAAAAAAA_99999999_88888888, clk);
+        dCacheReq.sendWReq(32'h00000130, 128'h77777777_66666666_55555555_44444444, clk);
+        dCacheReq.sendWReq(32'h00000140, 128'h33333333_22222222_11111111_00000000, clk);
+
+        dCacheReq.sendRReq(32'h00000130, clk);
+        dCacheResp.getResp(clk);
+        
+        dCacheReq.sendWReq(32'h00000200, 128'h33333333_22222222_11111111_00000000, clk);
+        
+        dCacheReq.sendRReq(32'h00000200, clk);
+        dCacheResp.getResp(clk);
     end
 
     axi_test_blk_mem axi_mem (

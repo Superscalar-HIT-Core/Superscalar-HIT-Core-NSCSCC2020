@@ -193,6 +193,63 @@ interface DataResp;
     endtask //automatic
 endinterface //DataResp
 
+interface DCacheReq;
+    logic           valid;
+    logic           ready;
+
+    logic [ 31:0]   addr;
+    logic           write_en;
+    logic [127:0]   data;
+
+    modport axi(output ready, input valid, addr, write_en, data);
+    modport dCache(input ready, output valid, addr, write_en, data);
+
+    task automatic sendWReq(logic [31:0] ad, logic [127:0] dat, ref logic clk);
+        @(posedge clk) #1 begin
+            valid       =   `TRUE;
+            addr        =   ad;
+            write_en    =   `TRUE;
+            data        =   dat;
+        end
+        do @(posedge clk);
+        while (!ready);
+        #1
+        valid   =   `FALSE;
+    endtask //automatic
+
+    task automatic sendRReq(logic [31:0] ad, ref logic clk);
+        @(posedge clk) #1 begin
+            valid       =   `TRUE;
+            addr        =   ad;
+            write_en    =   `FALSE;
+        end
+        do @(posedge clk);
+        while (!ready);
+        #1
+        valid   =   `FALSE;
+    endtask //automatic
+endinterface //DCacheReq
+
+interface DCacheResp;
+    logic           valid;
+    logic           ready;
+
+    logic [127:0]   data;
+
+    modport axi(output valid, data, input ready);
+    modport dCache(input valid, data, output ready);
+    
+    task automatic getResp(ref logic clk);
+        @(posedge clk) #1 begin
+            ready       =   `TRUE;
+        end
+        do @(posedge clk);
+        while (!valid);
+        #1
+        ready   =   `FALSE;
+    endtask //automatic
+endinterface //DCacheResp
+
 interface IF0_Regs;
     logic   [31:0]  nPC;
     logic   [31:0]  PC;

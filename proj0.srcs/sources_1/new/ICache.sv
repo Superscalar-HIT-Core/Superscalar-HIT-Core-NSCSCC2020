@@ -21,16 +21,16 @@
 `include "defs.sv"
 
 //  virtually index, physically tag
-//  index : low 12 bit[11:0]
+//  index : low 10 bit[9:0]
 //      128bit/cacheline (16 byte), [3:0] addr in line
-//      4-line/group (64 byte), 256 group, [11:4] group address
-//  tag : high 20 bit[31:12]
+//      4-line/group (64 byte), 64 group, [9:4] group address
+//  tag : high 22 bit[31:10]
 
 //  age bit :  3 bit for every group
 //  age reg :  3 * 64
 
-//  tag     : 22 bit for every line
-//  tag ram : 22 * 64 （* 4）
+//  tag     : 21 bit for every line
+//  tag ram : 21 * 64 （* 4）
 
 //  data ram: 128 * 64 (* 4)
 
@@ -54,15 +54,15 @@ module ICache(
     typedef struct packed {
         logic           clk;
         logic           writeEn;
-        logic   [ 7:0]  address;
-        logic   [19:0]  dataIn;
-        logic   [19:0]  dataOut;
+        logic   [ 5:0]  address;
+        logic   [21:0]  dataIn;
+        logic   [21:0]  dataOut;
     } TagRamIO;
 
     typedef struct packed {
         logic           clk;
         logic           writeEn;
-        logic  [  7:0]  address;
+        logic  [  5:0]  address;
         logic  [127:0]  dataIn;
         logic  [127:0]  dataOut;
     } DataRamIO;
@@ -70,8 +70,8 @@ module ICache(
     ICacheState     state, nextState, lastState;
     logic [31:0]    delayPC;
     logic           hit;
-    logic [ 7:0]    lineAddress, delayLineAddr;
-    logic [19:0]    tag, delayTag;
+    logic [ 5:0]    lineAddress, delayLineAddr;
+    logic [21:0]    tag, delayTag;
 
     logic [ 63:0]   valid   [ 3:0];
     logic [ 63:0]   nxtvalid[ 3:0];
@@ -151,8 +151,8 @@ module ICache(
 
     assign iCache_tlb.virAddr0  = regs_iCache.PC & 32'hffff_fffc;
     assign iCache_tlb.virAddr1  = regs_iCache.PC | 32'h0000_0004;
-    assign lineAddress          = regs_iCache.PC[11:4];
-    assign tag                  = iCache_tlb.phyAddr0[31:12];
+    assign lineAddress          = regs_iCache.PC[9:4];
+    assign tag                  = iCache_tlb.phyAddr0[31:10];
     assign hit                  = (tag == tag0IO.dataOut && valid[0][delayLineAddr]) ||
                                   (tag == tag1IO.dataOut && valid[1][delayLineAddr]) ||
                                   (tag == tag2IO.dataOut && valid[2][delayLineAddr]) ||
