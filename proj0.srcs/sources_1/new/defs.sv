@@ -66,6 +66,8 @@ typedef struct packed {
     logic           valid;
     NLPPredInfo     nlpInfo;
     BPDPredInfo     bpdInfo;
+    logic           predTaken;
+    logic   [31:0]  predAddr;
 } InstBundle;
 
 `endif

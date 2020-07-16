@@ -29,8 +29,6 @@ module IF_3(
     NLPUpdate.if3           if3_nlp,
     Ctrl.slave              ctrl_if3    // only care aboud flushReq
 );
-    typedef enum { sCorrect, sFalsePos, sFalseNeg, sWrongTarget } BranchPredictState;
-
     logic       inst0Jr;
     logic       inst1Jr;
 
@@ -39,8 +37,6 @@ module IF_3(
 
     InstBundle  inst0;
     InstBundle  inst1;
-
-    BranchPredictState inst0State, inst1State;
 
     Predecoder pre0(
         .pc     (regs_if3.inst0.pc      ),
@@ -68,7 +64,11 @@ module IF_3(
     assign inst0NLPTaken = (inst0.nlpInfo.valid && inst0.nlpInfo.taken) ? `TRUE : `FALSE;   // eliminate X state
     assign inst1NLPTaken = (inst1.nlpInfo.valid && inst1.nlpInfo.taken) ? `TRUE : `FALSE;
 
-    assign ctrl_if3.flushReq = inst0State != sCorrect || inst1State != sCorrect;
+    assign inst0.predTaken  = inst0.taken && !(inst0Jr && !inst0.nlpInfo.valid);
+    assign inst0.predAddr   = inst0Jr ? inst0.nlpInfo.target : inst0.target;
+
+    assign inst1.predTaken  = inst1.taken && !(inst1Jr && !inst1.nlpInfo.valid);
+    assign inst1.predAddr   = inst1Jr ? inst1.nlpInfo.target : inst1.target;
 
     always_comb begin
         if3_regs.inst0.pc       = regs_if3.inst0.pc;
@@ -111,184 +111,53 @@ module IF_3(
             inst1.taken = `FALSE;
         end
 
-        if((!inst0.nlpInfo.valid && !inst0.bpdInfo.valid) || (!inst0.isJ && !inst0.isBr)) begin
-            inst0State = sCorrect;
-        end else if(inst0.taken && inst0NLPTaken && (inst0Jr || inst0.nlpInfo.target == inst0.target)) begin
-            inst0State = sCorrect;
-        end else if(inst0.taken && inst0NLPTaken) begin
-            inst0State = sWrongTarget;
-        end else if(inst0.taken && !inst0NLPTaken) begin
-            inst0State = sFalseNeg;
-        end else if(!inst0.taken && !inst0NLPTaken) begin
-            inst0State = sCorrect;
-        end else if(!inst0.taken && inst0NLPTaken && !inst0Jr) begin
-            inst0State = sFalsePos;
-        end else begin
-            inst0State = sCorrect;
-        end
-
-        if((!inst1.nlpInfo.valid && !inst1.bpdInfo.valid) || (!inst1.isJ && !inst1.isBr)) begin
-            inst1State = sCorrect;
-        end else if(inst1.taken && inst1NLPTaken && (inst1Jr || inst1.nlpInfo.target == inst1.target)) begin
-            inst1State = sCorrect;
-        end else if(inst1.taken && inst1NLPTaken) begin
-            inst1State = sWrongTarget;
-        end else if(inst1.taken && !inst1NLPTaken) begin
-            inst1State = sFalseNeg;
-        end else if(!inst1.taken && !inst1NLPTaken) begin
-            inst1State = sCorrect;
-        end else if(!inst1.taken && inst1NLPTaken && !inst1Jr) begin
-            inst1State = sFalsePos;
-        end else begin
-            inst1State = sCorrect;
-        end
-
-        if(inst0State != sCorrect) begin
-            case(inst0State)
-                sFalsePos: begin
-                    if3_0.redirect      = `TRUE;
-                    if3_0.redirectPC    = inst0.pc + 32'h8;
-                end
-                sFalseNeg: begin
-                    if(inst0Jr && !inst0.nlpInfo.valid) begin
-                        if3_0.redirect      = `FALSE;
-                    end else if(inst0Jr) begin
-                        if3_0.redirect      = `TRUE;
-                        if3_0.redirectPC    = inst0.nlpInfo.target;
-                    end else begin
-                        if3_0.redirect      = `TRUE;
-                        if3_0.redirectPC    = inst0.target;
-                    end
-                end
-                sWrongTarget: begin
-                    if3_0.redirect      = `TRUE;
-                    if3_0.redirectPC    = inst0.target;
-                end
-            endcase
-            regs_if3.rescueDS = `FALSE;
-        end else if(inst1State != sCorrect) begin
-            case(inst1State)
-                sFalsePos: begin
-                    if3_0.redirect      = `TRUE;
-                    if3_0.redirectPC    = inst1.pc + 32'h8;
-                    regs_if3.rescueDS   = `TRUE;
-                end
-                sFalseNeg: begin
-                    if(inst1Jr && !inst1.nlpInfo.valid) begin
-                        if3_0.redirect      = `FALSE;
-                        regs_if3.rescueDS   = `FALSE;
-                    end else if(inst1Jr) begin
-                        if3_0.redirect      = `TRUE;    // probably not gonna happen
-                        if3_0.redirectPC    = inst1.nlpInfo.target;
-                        regs_if3.rescueDS   = `TRUE;
-                    end else begin
-                        if3_0.redirect      = `TRUE;
-                        if3_0.redirectPC    = inst1.target;
-                        regs_if3.rescueDS   = `TRUE;
-                    end
-                end
-                sWrongTarget: begin
-                    if3_0.redirect      = `TRUE;
-                    if3_0.redirectPC    = inst1.target;
-                    regs_if3.rescueDS   = `TRUE;
-                end
-            endcase
+        if(inst0.predTaken && !inst0NLPTaken) begin
+            if3_0.redirect      = `TRUE;
+            if3_0.redirectPC    = inst0.predAddr;
+            ctrl_if3.flushReq   = `TRUE;
+            regs_if3.rescueDS   = `FALSE;
+        end else if(!inst0.predTaken && inst0NLPTaken) begin
+            if3_0.redirect      = `TRUE;
+            if3_0.redirectPC    = inst0.pc + 8;
+            ctrl_if3.flushReq   = `TRUE;
+            regs_if3.rescueDS   = `FALSE;
+        end else if(inst1.predTaken && !inst1NLPTaken) begin
+            if3_0.redirect      = `TRUE;
+            if3_0.redirectPC    = inst1.predAddr;
+            ctrl_if3.flushReq   = `TRUE;
+            regs_if3.rescueDS   = `TRUE;
+        end else if(!inst1.predTaken && inst1NLPTaken) begin
+            if3_0.redirect      = `TRUE;
+            if3_0.redirectPC    = inst1.pc + 8;
+            ctrl_if3.flushReq   = `TRUE;
+            regs_if3.rescueDS   = `TRUE;
         end else begin
             if3_0.redirect      = `FALSE;
+            ctrl_if3.flushReq   = `FALSE;
             regs_if3.rescueDS   = `FALSE;
         end
+    end
 
-        case(inst0State)
-            sCorrect: begin
-                if(
-                    inst0.nlpInfo.valid &&
-                    !inst0.nlpInfo.taken &&
-                    !inst0.taken &&
-                    !(inst0.nlpInfo.target == inst0.target)
-                ) begin
-                    if3_nlp.update0.valid       = `TRUE;
-                    if3_nlp.update0.target      = inst0.target;
-                    if3_nlp.update0.shouldTake  = `TRUE;
-                    if3_nlp.update0.bimState    = inst0.nlpInfo.bimState;
-                end else begin
-                    if3_nlp.update0.valid   = `FALSE;
-                end
-            end
-            sFalsePos: begin
-                if3_nlp.update0.valid       = `TRUE;
-                if3_nlp.update0.target      = inst0Jr ? inst0.nlpInfo.target : inst0.target;
-                if3_nlp.update0.shouldTake  = `FALSE;
-                if3_nlp.update0.bimState    = inst0.nlpInfo.bimState;
-            end
-            sFalseNeg: begin
-                if(!inst0.nlpInfo.valid && inst0Jr) begin
-                    if3_nlp.update0.valid       = `FALSE;   // jalr, wait for backend update
-                end else if(!inst0.nlpInfo.valid && !inst0Jr) begin
-                    if3_nlp.update0.valid       = `TRUE;
-                    if3_nlp.update0.target      = inst0.target;
-                    if3_nlp.update0.shouldTake  = `TRUE;
-                    if3_nlp.update0.bimState    = inst0.isJ ? 2'b11 : inst0.nlpInfo.bimState;
-                end else begin
-                    if3_nlp.update0.valid       = `TRUE;
-                    if3_nlp.update0.target      = inst0Jr ? inst0.nlpInfo.target : inst0.target;
-                    if3_nlp.update0.shouldTake  = `TRUE;
-                    if3_nlp.update0.bimState    = inst0.isJ ? 2'b11 : inst0.nlpInfo.bimState;
-                end
-            end
-            sWrongTarget: begin
-                if3_nlp.update0.valid       = `TRUE;
-                if3_nlp.update0.target      = inst0.target;
-                if3_nlp.update0.shouldTake  = `TRUE;
-                if3_nlp.update0.bimState    = inst0.nlpInfo.bimState;
-            end
-        endcase
+    always_comb begin
+        if(inst0.bpdInfo.valid || (inst0.isJ && (!inst0Jr || (inst0Jr && inst0.nlpInfo.valid)))) begin
+            if3_nlp.update0.target      = inst0.predAddr;
+            if3_nlp.update0.bimState    = inst0.nlpInfo.valid ? inst0.nlpInfo.bimState : 2'b01;
+            if3_nlp.update0.shouldTake  = inst0.predTaken;
+            if3_nlp.update0.valid       = `TRUE;
+        end else begin
+            if3_nlp.update0.valid       = `FALSE;
+        end
+    end
 
-        case(inst1State)
-            sCorrect: begin
-                if(
-                    inst1.nlpInfo.valid &&
-                    !inst1.nlpInfo.taken &&
-                    !inst1.taken &&
-                    !(inst1.nlpInfo.target == inst1.target)
-                ) begin
-                    if3_nlp.update1.valid       = `TRUE;
-                    if3_nlp.update1.target      = inst1.target;
-                    if3_nlp.update1.shouldTake  = `TRUE;
-                    if3_nlp.update1.bimState    = inst1.nlpInfo.bimState;
-                end else begin
-                    if3_nlp.update1.valid   = `FALSE;
-                end
-            end
-            sFalsePos: begin
-                if3_nlp.update1.valid       = `TRUE;
-                if3_nlp.update1.target      = inst1Jr ? inst1.nlpInfo.target : inst1.target;
-                if3_nlp.update1.shouldTake  = `FALSE;
-                if3_nlp.update1.bimState    = inst1.nlpInfo.bimState;
-            end
-            sFalseNeg: begin
-                if(!inst1.nlpInfo.valid && inst1Jr) begin
-                    if3_nlp.update1.valid       = `FALSE;   // jalr, wait for backend update
-                end else if(!inst1.nlpInfo.valid && !inst1Jr) begin
-                    if3_nlp.update1.valid       = `TRUE;
-                    if3_nlp.update1.target      = inst1.target;
-                    if3_nlp.update1.shouldTake  = `TRUE;
-                    if3_nlp.update1.bimState    = inst1.isJ ? 2'b11 : inst1.nlpInfo.bimState;
-                end else begin
-                    if3_nlp.update1.valid       = `TRUE;
-                    if3_nlp.update1.target      = inst1Jr ? inst1.nlpInfo.target : inst1.target;
-                    if3_nlp.update1.shouldTake  = `TRUE;
-                    if3_nlp.update1.bimState    = inst1.isJ ? 2'b11 : inst1.nlpInfo.bimState;
-                end
-            end
-            sWrongTarget: begin
-                if3_nlp.update1.valid       = `TRUE;
-                if3_nlp.update1.target      = inst1.target;
-                if3_nlp.update1.shouldTake  = `TRUE;
-                if3_nlp.update1.bimState    = inst1.nlpInfo.bimState;
-            end
-        endcase
-
-        if(ctrl_if3.flush) regs_if3.rescueDS = `FALSE;
+    always_comb begin
+        if(inst1.bpdInfo.valid || (inst1.isJ && (!inst1Jr || (inst1Jr && inst1.nlpInfo.valid)))) begin
+            if3_nlp.update1.target      = inst1.predAddr;
+            if3_nlp.update1.bimState    = inst1.nlpInfo.valid ? inst1.nlpInfo.bimState : 2'b01;
+            if3_nlp.update1.shouldTake  = inst1.predTaken;
+            if3_nlp.update1.valid       = `TRUE;
+        end else begin
+            if3_nlp.update1.valid       = `FALSE;
+        end
     end
 
 endmodule
