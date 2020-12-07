@@ -1,6 +1,6 @@
 # Superscalar-HIT-Core
 
-**S**uperscalar **HIT** **Core**（简称SHIT Core） 是一个基于MIPS指令集的乱序四发射处理器。在`xc7a200tfbg676-2`平台上运行频率88MHz。
+Superscalar HIT Core 是一个基于MIPS指令集的乱序四发射处理器。在`xc7a200tfbg676-2`平台上运行频率88MHz。
 
 Superscalar HIT Core is a quad-issue out-of-order processor core implementing MIPS ISA. It runs at the frequency of 88MHz on Xilinx `xc7a200tfbg676-2` FPGA. 
 
@@ -32,12 +32,12 @@ Superscalar HIT Core is a quad-issue out-of-order processor core implementing MI
 - Support privileged CP0 instructions 
 - GShare branch predictor
 
-Design document and slides is available only in Chinese.
+Design document and slides are available in Chinese.
 
 
 ## 作者 Authors
 
-- 胡博涵 Bohan Hu (hubohancser@gmail.com)
-- 黎庚祉 Gnegzhi Li (willsonlgz@gmail.com)
+- 胡博涵 Bohan Hu (hubohancser@outlook.com)
+- 黎庚祉 Gengzhi Li (willsonlgz@gmail.com)
 - 施杨 Yang Shi (Gyhanis@gmail.com)
 - 王世焜 Shikun Wang (tanimodoli@gmail.com)
